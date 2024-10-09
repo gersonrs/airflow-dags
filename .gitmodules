@@ -1,0 +1,3 @@
+[submodule "dags/airflow-submodule-dags"]
+	path = dags/airflow-submodule-dags
+	url = git@github.com:GersonRS/airflow-submodule-dags.git
