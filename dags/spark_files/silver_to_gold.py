@@ -120,20 +120,6 @@ if __name__ == "__main__":
 
     get_gold_subscribers.printSchema()
     get_gold_voters.printSchema()
-    # test save dataframe into postgres
-    # yugabytedb database [ysql]
-    # k8s cluster ip for yugabytedb [intra-communication]
-    """
-    get_gold_subscribers \
-        .write \
-        .format("jdbc") \
-        .mode("overwrite") \
-        .option("url", "jdbc:postgresql://10.0.206.213:5433/yugabyte") \
-        .option("dbtable", "public.subers") \
-        .option("user", "yugabyte") \
-        .option("password", "yugabyte") \
-        .save()
-    """
 
     # stop session
     spark.stop()
