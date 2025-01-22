@@ -1,0 +1,109 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: "{{ params.spark_job_name }}-{{ ds_nodash }}"
+  labels:
+    date: "{{ ds_nodash }}"
+  namespace: processing
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: gersonrs/spark-py:v1.0.0
+  imagePullPolicy: IfNotPresent
+  mainApplicationFile: "local:///repo/solinftec_airflow_orion.git/dags/spark/{{ params.spark_file }}"
+  sparkVersion: 3.4.3
+  timeToLiveSeconds: 360
+  restartPolicy:
+    type: OnFailure
+    onFailureRetries: 1
+    onFailureRetryInterval: 10
+    onSubmissionFailureRetries: 5
+    onSubmissionFailureRetryInterval: 20
+  hadoopConf:
+    fs.s3a.endpoint: "http://bigdata-storage-hl.deepstore-bigdata.svc.cluster.local:9000"
+    fs.s3a.impl: "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    fs.s3a.path.style.access: "True"
+    fs.s3a.connection.ssl.enabled: "false"
+    fs.s3a.fast.upload: "true"
+    fs.s3a.aws.credentials.provider: "com.amazonaws.auth.EnvironmentVariableCredentialsProvider"
+  sparkConf:
+    spark.hive.metastore.uris: "thrift://hive-metastore.metastore.svc.cluster.local:9083"
+    spark.sql.execution.arrow.pyspark.enabled: "true"
+    spark.sql.catalog.spark_catalog: "org.apache.iceberg.spark.SparkSessionCatalog"
+    spark.sql.catalog.spark_catalog.type: "hive"
+    spark.sql.extensions: "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"
+    spark.sql.catalog.local: "org.apache.iceberg.spark.SparkCatalog"
+    spark.sql.catalog.local.type: "hadoop"
+    spark.sql.catalog.local.warehouse: "s3a://warehouse"
+    spark.sql.defaultCatalog: "local"
+  volumes:
+    - name: work-dir
+      emptyDir: {}
+    - name: xcom
+      emptyDir: {}
+  driver:
+    cores: {{ params.spark_driver_cores }}
+    memory: "{{ params.spark_driver_memory }}"
+    labels:
+      version: 3.4.3
+    serviceAccount: default
+    terminationGracePeriodSeconds: 360
+    envSecretKeyRefs:
+      AWS_ACCESS_KEY_ID:
+        name: spark-ds-bg
+        key: CONSOLE_ACCESS_KEY
+      AWS_SECRET_ACCESS_KEY:
+        name: spark-ds-bg
+        key: CONSOLE_SECRET_KEY
+    secrets:
+      - name: git-creds
+        path: /etc/git-secret
+        secretType: Generic
+    volumeMounts:
+      - name: work-dir
+        mountPath: /repo
+      - name: xcom
+        mountPath: /airflow/xcom
+    initContainers:
+      - name: git-sync
+        image: k8s.gcr.io/git-sync/git-sync:v4.2.4
+        args:
+          - --repo=git@github.com:solinftec/solinftec_airflow_orion.git
+          - --root=/repo
+          - --one-time
+        volumeMounts:
+          - name: work-dir
+            mountPath: /repo
+          - name: git-creds-volume
+            mountPath: /etc/git-secret
+    sidecars:
+      - name: airflow-xcom-sidecar
+        image: alpine
+        command: ["sh", "-c", 'trap "exit 0" INT; while true; do sleep 1; done;']
+        volumeMounts:
+          - name: xcom
+            mountPath: /airflow/xcom
+        resources:
+          requests:
+            cpu: "1m"
+            memory: "10Mi"
+  executor:
+    cores: {{ params.spark_executor_cores }}
+    instances: {{ params.spark_executor_instances }}
+    memory: "{{ params.spark_executor_memory }}"
+    labels:
+      version: 3.4.3
+    serviceAccount: default
+    envSecretKeyRefs:
+      AWS_ACCESS_KEY_ID:
+        name: spark-ds-bg
+        key: CONSOLE_ACCESS_KEY
+      AWS_SECRET_ACCESS_KEY:
+        name: spark-ds-bg
+        key: CONSOLE_SECRET_KEY
+    volumeMounts:
+      - name: work-dir
+        mountPath: /repo
+      - name: xcom
+        mountPath: /airflow/xcom

@@ -1,10 +1,18 @@
+astro-sdk-python[postgres, amazon, snowflake]
+apache-airflow-providers-cncf-kubernetes
+apache-airflow-providers-apache-spark
+apache-airflow-providers-apache-kafka
+apache-airflow-providers-apache-flink
+apache-airflow-providers-apache-pinot
 airflow-provider-mlflow
-matplotlib
-minio
-scikit-learn
+confluent-kafka
 mlflow-skinny
-pandas
-seaborn
-imblearn
-s3fs
+scikit-learn
+matplotlib
 evidently
+imblearn
+pyspark
+seaborn
+pandas
+minio
+s3fs
