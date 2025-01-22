@@ -6,7 +6,7 @@ from typing import Tuple
 import pandas as pd
 from minio import Minio
 
-from dags.utils.constants import CURATED_ZONE, PROCESSING_ZONE
+from utils.constants import CURATED_ZONE, PROCESSING_ZONE
 
 
 def read_business_json_data(*file: Tuple[str]) -> str:
