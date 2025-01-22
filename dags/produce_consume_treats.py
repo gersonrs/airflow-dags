@@ -12,10 +12,10 @@ from airflow.providers.apache.kafka.operators.consume import ConsumeFromTopicOpe
 import json
 import random
 
-YOUR_NAME = "<your name>"
-YOUR_PET_NAME = "<your (imaginary) pet name>"
+YOUR_NAME = "Gerson"
+YOUR_PET_NAME = "Delphi"
 NUMBER_OF_TREATS = 5
-KAFKA_TOPIC = "my_topic"
+KAFKA_TOPIC = "connection_test"
 
 
 def prod_function(num_treats, pet_name):
@@ -49,13 +49,14 @@ def consume_function(message, name):
     pet_name = message_content["pet_name"]
     pet_mood_post_treat = message_content["pet_mood_post_treat"]
     print(
-        f"Message #{key}: Hello {name}, your pet {pet_name} has consumed another treat and is now {pet_mood_post_treat}!"
+        f"Message #{key}: Hello {name}, your pet {pet_name} has"
+        + f"consumed another treat and is now {pet_mood_post_treat}!"
     )
 
 
 @dag(
     start_date=datetime(2023, 4, 1),
-    schedule=None,
+    schedule="@daily",
     catchup=False,
     render_template_as_native_obj=True,
 )
