@@ -11,10 +11,7 @@ no primeiro estado.
 """
 from __future__ import annotations
 
-import os
-import pathlib
-from datetime import datetime, timedelta
-from os.path import join
+from datetime import timedelta
 
 # [START import_module]
 # O objeto DAG; precisaremos disso para instanciar um DAG
@@ -44,8 +41,8 @@ E a segunda tarefa é verificar o estado final do sparkApplication que enviou no
 
 ## Objetivo desta DAG
 
-* Processar todos os dados da landing zone referentes aos dados de user,subscription,movies e credit_card, 
-passando para uma tabela na camada bronze no minio
+* Processar todos os dados da landing zone referentes aos dados de user,subscription,movies
+e credit_card, passando para uma tabela na camada bronze no minio
 
 Execute para testar.
 """

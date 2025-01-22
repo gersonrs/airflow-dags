@@ -9,26 +9,12 @@ from pyspark.sql.types import (
     TimestampType,
 )
 from pyspark.sql.functions import (
-    col,
     lit,
-    round,
-    mean,
-    stddev,
-    min,
-    max,
-    year,
-    month,
-    datediff,
-    abs,
-    count,
-    first,
-    concat_ws,
     current_timestamp,
 )
 
 
 if __name__ == "__main__":
-
     spark = (
         SparkSession.builder.config(
             "spark.hive.metastore.uris",

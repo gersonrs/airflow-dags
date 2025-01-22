@@ -49,7 +49,8 @@ def consume_function(message, name):
     pet_name = message_content["pet_name"]
     pet_mood_post_treat = message_content["pet_mood_post_treat"]
     print(
-        f"Message #{key}: Hello {name}, your pet {pet_name} has consumed another treat and is now {pet_mood_post_treat}!"
+        f"Message #{key}: Hello {name}, your pet {pet_name} has"
+        + f"consumed another treat and is now {pet_mood_post_treat}!"
     )
 
 

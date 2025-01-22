@@ -7,7 +7,6 @@ from pyspark.sql.functions import (
     col,
     concat_ws,
     current_timestamp,
-    encode,
     from_json,
     lit,
     split,
@@ -240,23 +239,20 @@ if __name__ == "__main__":
         how="inner",
     )
 
-    inner_join_user_subscribers_with_credit_card = (
-        inner_join_users_with_subscriptions.join(
-            enhance_column_selection_credit_cards,
-            inner_join_users_with_subscriptions.user_id
-            == enhance_column_selection_credit_cards.credit_card_user_id,
-            how="inner",
-        ).withColumn("processing_time", lit(current_timestamp()))
-    )
+    inner_join_user_subscribers_with_credit_card = inner_join_users_with_subscriptions.join(
+        enhance_column_selection_credit_cards,
+        inner_join_users_with_subscriptions.user_id
+        == enhance_column_selection_credit_cards.credit_card_user_id,
+        how="inner",
+    ).withColumn("processing_time", lit(current_timestamp()))
 
-    inner_join_user_subscribers_with_credit_card.write.format("delta").mode(
-        "overwrite"
-    ).save("s3a://lakehouse/silver/subscribers")
+    inner_join_user_subscribers_with_credit_card.write.format("delta").mode("overwrite").save(
+        "s3a://lakehouse/silver/subscribers"
+    )
 
     inner_join_users_with_movies = enhance_column_selection_users.join(
         enhance_column_selection_movies,
-        enhance_column_selection_users.user_id
-        == enhance_column_selection_movies.movies_user_id,
+        enhance_column_selection_users.user_id == enhance_column_selection_movies.movies_user_id,
         how="inner",
     ).withColumn("processing_time", lit(current_timestamp()))
 

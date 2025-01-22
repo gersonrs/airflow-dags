@@ -69,9 +69,7 @@ if __name__ == "__main__":
         .execute()
     )
 
-    get_gold_subscribers.write.format("delta").mode("overwrite").save(
-        delta_gold_tb_subers_location
-    )
+    get_gold_subscribers.write.format("delta").mode("overwrite").save(delta_gold_tb_subers_location)
 
     get_voters = "s3a://lakehouse/silver/voters"
     df_silver_voters = DeltaTable.forPath(spark, get_voters)
@@ -118,9 +116,7 @@ if __name__ == "__main__":
         .execute()
     )
 
-    get_gold_voters.write.format("delta").mode("overwrite").save(
-        delta_gold_tb_voters_location
-    )
+    get_gold_voters.write.format("delta").mode("overwrite").save(delta_gold_tb_voters_location)
 
     get_gold_subscribers.printSchema()
     get_gold_voters.printSchema()

@@ -11,10 +11,7 @@ no primeiro estado.
 """
 from __future__ import annotations
 
-import os
-import pathlib
-from datetime import datetime, timedelta
-from os.path import join
+from datetime import timedelta
 
 # [START import_module]
 # O objeto DAG; precisaremos disso para instanciar um DAG
@@ -22,7 +19,6 @@ from airflow.decorators import dag
 
 # Operadores, precisamos que isso funcione!
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
-from airflow.providers.cncf.kubernetes.sensors.spark_kubernetes import SparkKubernetesSensor
 from airflow.utils.dates import days_ago
 
 # [END import_module]
@@ -44,7 +40,8 @@ E a segunda tarefa é verificar o estado final do sparkApplication que enviou no
 
 ## Objetivo desta DAG
 
-* Processar todos os dados da raw zone referentes aos dados de torre e passar para uma tabela iceberg no minio
+* Processar todos os dados da raw zone referentes aos dados de torre e passar para uma tabela
+iceberg no minio
 
 Execute para testar.
 """
