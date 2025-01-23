@@ -75,5 +75,6 @@ extend-exclude = '''
   | .astro
   | .github
   | htmlcov
+  | dags/modules
 )/
 '''
