@@ -1,0 +1,63 @@
+= Imagem Docker Personalizada do Spark
+
+Este repositório contém um Dockerfile para construir uma imagem Docker personalizada do Apache Spark, incluindo bibliotecas adicionais para integração com diversas ferramentas de Big Data e Machine Learning.
+
+== Features
+
+* **Baseada no Spark 3.4.3:** Utiliza a imagem oficial do Apache Spark 3.4.3 como base.
+* **Bibliotecas Adicionais:** Inclui bibliotecas Java populares para integração com Iceberg, AWS, Hadoop e outras.
+
+== Getting Started
+
+=== Pré-requisitos
+
+* Docker instalado e em execução.
+
+=== Build da Imagem local
+
+1. Clone este repositório:
+
+```bash
+git clone https://github.com/GersonRS/Spark.git
+```
+
+2. Navegue até o diretório do repositório:
+
+```bash
+cd Spark
+```
+
+3. Construa a imagem Docker:
+
+```bash
+docker build -t gersonrs/Spark .
+```
+
+== Bibliotecas Inclusas
+
+As seguintes [dependencias](dependencies.txt) Java estão instaladas nesta imagem:
+
+* `com.amazonaws:aws-java-sdk-bundle:1.12.431`
+* `org.apache.iceberg:iceberg-spark-runtime-3.4_2.12:1.6.0`
+* `org.apache.hadoop:hadoop-aws:3.3.4`
+* `org.apache.hadoop:hadoop-common:3.3.4`
+
+== Dockerfile
+
+O Dockerfile utilizado para construir a imagem pode ser encontrado em [Dockerfile](Dockerfile).  Ele estende a imagem `spark:3.4.3`, instala as dependências adicionais e configura o ambiente.
+
+
+== Suporte
+
+Entre em contato com o mantenedor do projeto em um dos seguintes lugares:
+
+* Linkedin: https://www.linkedin.com/in/gersonrsantos/
+* Instagram: https://www.instagram.com/gersonrsantos/
+* Twitter: https://twitter.com/gersonrs3
+* Telegram: https://t.me/gersonrsantos
+* Email: gersonrodriguessantos8@gmail.com
+
+
+== Licença
+
+Este projeto está licenciado sob a licença Apache 2.0. Veja o arquivo [LICENSE](LICENSE) para mais informações.

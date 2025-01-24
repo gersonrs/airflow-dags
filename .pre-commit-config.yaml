@@ -1,8 +1,9 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: check-yaml
+        exclude: ^(node_modules/|docs/)
       - id: debug-statements
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -14,35 +15,41 @@ repos:
       - id: no-commit-to-branch
         args: ["--branch", "main"]
   - repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.12.0
+    rev: v3.14.0
     hooks:
       - id: reorder-python-imports
         args:
           [
             --application-directories,
             ".:dags",
-            --py38-plus,
+            --py310-plus,
             --add-import,
             "from __future__ import annotations",
           ]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
+    rev: v3.19.1
     hooks:
       - id: pyupgrade
-        args: [--py38-plus]
+        args: [--py310-plus]
   - repo: https://github.com/psf/black
     rev: 23.12.1
     hooks:
       - id: black
-        args: [--line-length=100]
+        args: [--config pyproject.toml]
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.1.0
+    rev: 7.1.1
     hooks:
       - id: flake8
-        args: [--line-length=100]
+        args: [--config .flake8]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.14.1
     hooks:
       - id: mypy
         args: [--config-file=mypy.ini]
         exclude: ^(.astro/|plugin/|.github/|data/|htmlcov)
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.20.0
+    hooks:
+      - id: commitlint
+        stages: [commit-msg]
+        additional_dependencies: ["@commitlint/config-conventional"]
