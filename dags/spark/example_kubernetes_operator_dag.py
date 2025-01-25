@@ -25,7 +25,7 @@ with DAG(
     )
 
     pod_task_xcom_result = BashOperator(
-        bash_command="echo \"{{ task_instance.xcom_pull('write-xcom') }}\"",
+        bash_command="echo \"{{ task_instance.xcom_pull('write-xcom')[0] }}\"",
         task_id="pod_task_xcom_result",
     )
 
