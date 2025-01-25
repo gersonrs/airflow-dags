@@ -94,7 +94,7 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
         namespace="processing",
         application_file="yamls/ingestion_from_landing_data_file_to_bronze_tables.yaml",
         kubernetes_conn_id="conn_kubernetes",
-        do_xcom_push=True,
+        do_xcom_push=False,
         get_logs=True,
         deferrable=True,
         # O parâmetro `params` no `SparkKubernetesOperator` é usado para passar parâmetros
