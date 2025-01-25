@@ -101,7 +101,7 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
             "spark_driver_cores": 1,
             "spark_driver_memory": "1G",
             "spark_executor_cores": 1,
-            "spark_executor_instances": 6,
+            "spark_executor_instances": 1,
             "spark_executor_memory": "1G",
             "spark_job_name": "ingestion-from-landing-data-file-to-bronze-tables",
             "spark_file": "spark/jobs/ingestion_from_landing_data_file_to_bronze_tables.py",
