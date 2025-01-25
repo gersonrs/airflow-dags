@@ -29,7 +29,7 @@ if __name__ == "__main__":
     spark.sparkContext.setLogLevel("INFO")
 
     # read subscribers data
-    get_subscribers = "s3a://lakehouse/silver/subscribers"
+    get_subscribers = "s3a://silver/subscribers"
     df_silver_subscribers = DeltaTable.forPath(spark, get_subscribers)
 
     select_column_subscribers = (
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         col("delivery_time").alias("event_time"),
     )
 
-    delta_gold_tb_subers_location = "s3a://lakehouse/gold/subers"
+    delta_gold_tb_subers_location = "s3a://gold/subers"
     (
         DeltaTable.createIfNotExists(spark)
         .tableName("subers")
@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     get_gold_subscribers.write.format("delta").mode("overwrite").save(delta_gold_tb_subers_location)
 
-    get_voters = "s3a://lakehouse/silver/voters"
+    get_voters = "s3a://silver/voters"
     df_silver_voters = DeltaTable.forPath(spark, get_voters)
 
     select_column_voters = (
@@ -99,7 +99,7 @@ if __name__ == "__main__":
         col("delivery_time").alias("event_time"),
     )
 
-    delta_gold_tb_voters_location = "s3a://lakehouse/gold/voters"
+    delta_gold_tb_voters_location = "s3a://gold/voters"
     (
         DeltaTable.createIfNotExists(spark)
         .tableName("voters")

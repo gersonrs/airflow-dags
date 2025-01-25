@@ -2,23 +2,23 @@
 # get file size in python
 from __future__ import annotations
 
-import os
 from os.path import abspath
-from pathlib import Path
 
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
+from pyspark.sql.dataframe import DataFrame
 from pyspark.sql.functions import current_timestamp
 from pyspark.sql.functions import lit
 
 
-def get_path_size(base_path: str) -> int:
-    PATH_MODELS = Path(base_path).parent
-    total_size = 0
-    for entry in os.listdir(str(PATH_MODELS)):
-        file_stats = os.stat(str(Path(PATH_MODELS, entry)))
-        total_size += file_stats.st_size
-    return total_size
+def get_path_size(df: DataFrame) -> int:
+    return (
+        spark._jsparkSession.sessionState()
+        .executePlan(df._jdf.queryExecution().logical(), df._jdf.queryExecution().mode())
+        .optimizedPlan()
+        .stats()
+        .sizeInBytes()
+    )
 
 
 # set default location for warehouse
@@ -34,8 +34,10 @@ if __name__ == "__main__":
         .getOrCreate()
     )
 
-    # show configured parameters
-    print(SparkConf().getAll())
+    log4j = spark._jvm.org.apache.log4j
+    logger = log4j.LogManager.getLogger("app")
+
+    logger.info(SparkConf().getAll())
 
     # set log level
     spark.sparkContext.setLogLevel("INFO")
@@ -61,7 +63,7 @@ if __name__ == "__main__":
         .withColumn("user_name", lit("gersonrs"))
         .withColumn("ingestion_type", lit("spark"))
         .withColumn("base_format", lit("json"))
-        .withColumn("file_size", lit(get_path_size(get_users_file)))
+        .withColumn("file_size", lit(get_path_size(df_user)))
         .withColumn("rows_written", lit(df_user.count()))
         .withColumn("schema", lit(df_user.schema.json()))
     )
@@ -80,7 +82,7 @@ if __name__ == "__main__":
         .withColumn("user_name", lit("gersonrs"))
         .withColumn("ingestion_type", lit("spark"))
         .withColumn("base_format", lit("json"))
-        .withColumn("file_size", lit(get_path_size(get_users_file)))
+        .withColumn("file_size", lit(get_path_size(df_subscription)))
         .withColumn("rows_written", lit(df_subscription.count()))
         .withColumn("schema", lit(df_subscription.schema.json()))
     )
@@ -99,7 +101,7 @@ if __name__ == "__main__":
         .withColumn("user_name", lit("gersonrs"))
         .withColumn("ingestion_type", lit("spark"))
         .withColumn("base_format", lit("json"))
-        .withColumn("file_size", lit(get_path_size(get_users_file)))
+        .withColumn("file_size", lit(get_path_size(df_credit_card)))
         .withColumn("rows_written", lit(df_credit_card.count()))
         .withColumn("schema", lit(df_credit_card.schema.json()))
     )
@@ -118,7 +120,7 @@ if __name__ == "__main__":
         .withColumn("user_name", lit("gersonrs"))
         .withColumn("ingestion_type", lit("spark"))
         .withColumn("base_format", lit("json"))
-        .withColumn("file_size", lit(get_path_size(get_users_file)))
+        .withColumn("file_size", lit(get_path_size(df_movies)))
         .withColumn("rows_written", lit(df_movies.count()))
         .withColumn("schema", lit(df_movies.schema.json()))
     )
@@ -127,14 +129,10 @@ if __name__ == "__main__":
     # file to be available for virtualization engine
     # using minio as storage inside of [k8s]
 
-    df_user.write.format("delta").mode("overwrite").save("s3a://lakehouse/bronze/users/")
-    df_subscription.write.format("delta").mode("overwrite").save(
-        "s3a://lakehouse/bronze/subscriptions/"
-    )
-    df_credit_card.write.format("delta").mode("overwrite").save(
-        "s3a://lakehouse/bronze/credit_cards/"
-    )
-    df_movies.write.format("delta").mode("overwrite").save("s3a://lakehouse/bronze/movies/")
+    df_user.write.format("delta").mode("overwrite").save("s3a://bronze/users/")
+    df_subscription.write.format("delta").mode("overwrite").save("s3a://bronze/subscriptions/")
+    df_credit_card.write.format("delta").mode("overwrite").save("s3a://bronze/credit_cards/")
+    df_movies.write.format("delta").mode("overwrite").save("s3a://bronze/movies/")
 
     df_user.printSchema()
     df_subscription.printSchema()

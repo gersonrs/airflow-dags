@@ -37,10 +37,10 @@ if __name__ == "__main__":
 
     # set dynamic input file [hard-coded]
     # can be changed for input parameters [spark-submit]
-    get_users_file = "s3a://lakehouse/bronze/users/"
-    get_subscription_file = "s3a://lakehouse/bronze/subscriptions/"
-    get_credit_card_file = "s3a://lakehouse/bronze/credit_cards/"
-    get_movies_file = "s3a://lakehouse/bronze/movies/"
+    get_users_file = "s3a://bronze/users/"
+    get_subscription_file = "s3a://bronze/subscriptions/"
+    get_credit_card_file = "s3a://bronze/credit_cards/"
+    get_movies_file = "s3a://bronze/movies/"
 
     # read user data
     df_bronze_users = spark.read.format("delta").format("delta").load(get_users_file)
@@ -250,7 +250,7 @@ if __name__ == "__main__":
     ).withColumn("processing_time", lit(current_timestamp()))
 
     inner_join_user_subscribers_with_credit_card.write.format("delta").mode("overwrite").save(
-        "s3a://lakehouse/silver/subscribers"
+        "s3a://silver/subscribers"
     )
 
     inner_join_users_with_movies = enhance_column_selection_users.join(
@@ -259,9 +259,7 @@ if __name__ == "__main__":
         how="inner",
     ).withColumn("processing_time", lit(current_timestamp()))
 
-    inner_join_users_with_movies.write.format("delta").mode("overwrite").save(
-        "s3a://lakehouse/silver/voters"
-    )
+    inner_join_users_with_movies.write.format("delta").mode("overwrite").save("s3a://silver/voters")
 
     inner_join_user_subscribers_with_credit_card.printSchema()
     inner_join_users_with_movies.printSchema()
