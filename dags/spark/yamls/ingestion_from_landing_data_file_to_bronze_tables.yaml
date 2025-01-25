@@ -31,7 +31,8 @@ spec:
   mode: cluster
   image: gersonrs/spark:latest
   imagePullPolicy: IfNotPresent
-  mainApplicationFile: "local:///repo/airflow_dags.git/dags/{{ params.spark_file }}"
+  # mainApplicationFile: "local:///repo/airflow_dags.git/dags/{{ params.spark_file }}"
+  mainApplicationFile: local:///opt/spark/examples/src/main/python/pi.py
   sparkVersion: 3.5.0
   timeToLiveSeconds: 360
   restartPolicy:
