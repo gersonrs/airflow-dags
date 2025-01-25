@@ -15,7 +15,6 @@ from datetime import timedelta
 
 from airflow.decorators import dag
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
-from airflow.providers.cncf.kubernetes.sensors.spark_kubernetes import SparkKubernetesSensor
 from airflow.utils.dates import days_ago
 
 # [START import_module]
@@ -32,7 +31,7 @@ from airflow.utils.dates import days_ago
 # [FIM import_module]
 # Documentação baseada em Markdown que serão renderizados nas páginas Grid , Graph e Calendar.
 doc_md_DAG = """
-# DAG Entrega dos dados que vem da landing para uma tabela bronze
+# DAG Entrega dos dados que vem de um csv para uma tabela iceberg no minio
 
 Este é um exemplo de DAG que usa SparkKubernetesOperator e SparkKubernetesSensor.
 Neste exemplo, crio duas tarefas que são executadas sequencialmente.
@@ -41,8 +40,8 @@ E a segunda tarefa é verificar o estado final do sparkApplication que enviou no
 
 ## Objetivo desta DAG
 
-* Processar todos os dados da landing zone referentes aos dados de user,subscription,movies
-e credit_card, passando para uma tabela na camada bronze no minio
+* Processar todos os dados da raw zone referentes aos dados de torre e passar para uma tabela
+iceberg no minio
 
 Execute para testar.
 """
@@ -58,27 +57,27 @@ default_args = {
     "email_on_retry": False,
     "retries": 0,
     "retry_delay": timedelta(1),
+    "pool": "slow_pool",
 }
 # [FIM default_args]
 
 
 # [INICIO dag]
 @dag(
-    dag_id="ingestion-from-landing-data-file-to-bronze-tables",
+    dag_id="silver-to-gold",
     default_args=default_args,
     start_date=days_ago(1),
     catchup=False,
     schedule_interval="@daily",
     max_active_runs=1,
-    tags=["spark", "kubernetes", "sensor", "iceberg", "minio", "s3", "raw", "bronze"],
+    tags=["spark", "kubernetes", "sensor", "iceberg", "minio", "s3", "gold", "silver"],
     doc_md=doc_md_DAG,
 )
-def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
+def silver_to_gold_dag() -> None:
     """
-    `ingestion_from_landing_data_file_to_bronze_tables_dag()` é uma função que define um DAG
+    `silver_to_gold_dag()` é uma função que define um DAG
     (Directed Gráfico acíclico) no Apache Airflow. Este DAG é responsável por ingerir
-    dados dda landing, processar e colocar em uma tabela delta na camada bronze.
-    Consiste em duas tarefas:
+    dados de uma tabela bronze para uma tabela silver. Consiste em duas tarefas:
     """
 
     # [INICIO set_tasks]
@@ -89,22 +88,22 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
     # de yaml para acionar o processo, usando o spark-on-k8s para operar com base nos
     # dados e criando um `SparkApplication` em contêiner.
     submit = SparkKubernetesOperator(
-        task_id="ingestion_from_landing_data_file_to_bronze_tables_submit",
+        task_id="silver_to_gold_submit",
         namespace="processing",
-        application_file="../spark_jobs/ingestion_from_landing_data_file_to_bronze_tables.yaml",
-        kubernetes_conn_id="conn_kubernetes",
+        application_file="silver_to_gold.yaml",
         do_xcom_push=True,
         # O parâmetro `params` no `SparkKubernetesOperator` é usado para passar parâmetros
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
+        queue="kubernetes",
         params={
             "spark_driver_cores": 2,
             "spark_driver_memory": "2G",
             "spark_executor_cores": 2,
             "spark_executor_instances": 1,
             "spark_executor_memory": "2G",
-            "spark_job_name": "ingestion-from-landing-data-file-to-bronze-tables",
-            "spark_file": "ingestion_from_landing_data_file_to_bronze_tables.py",
+            "spark_job_name": "silver-to-gold",
+            "spark_file": "silver_to_gold.py",
         },
         doc_md="""
         ### Proposta desta tarefa
@@ -115,45 +114,18 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
         dados e criando um `SparkApplication` em contêiner.
         """,
     )
-    # A variável(task) `sensor` está criando uma instância da classe
-    # `SparkKubernetesSensor`. Este sensor é responsável por monitorar o status de um
-    # `SparkApplication` em execução em um cluster Kubernetes. Usando o sensor para ler
-    # e visualizar o resultado do `SparkApplication`, lê do xcom e verifica o par de
-    # status [chave e valor] do `submit`, contenco o nome do `SparkApplication` e
-    # passando para o `SparkKubernetesSensor`.
-    sensor = SparkKubernetesSensor(
-        task_id="ingestion_from_landing_data_file_to_bronze_tables_sensor",
-        namespace="processing",
-        application_name="{{task_instance.xcom_pull(task_ids='ingestion_from_landing_data_file_to_bronze_tables_submit')['metadata']['name']}}",  # noqa: E501
-        kubernetes_conn_id="conn_kubernetes",
-        attach_log=True,
-        doc_md="""
-        ### Proposta desta tarefa
-
-        * Ser responsável por monitorar o status de um `SparkApplication` em execução em um cluster
-        Kubernetes.
-
-        * Usar o sensor para ler e visualizar o resultado do `SparkApplication`.
-
-        * Ler do xcom e verifica o par de status [chave e valor] do `submit`, contenco o nome do
-        `SparkApplication` e passando para o `SparkKubernetesSensor`.
-        """,
-    )
     # [FIM set_tasks]
 
     # [INICIO task_sequence]
-    # `submit >> sensor` está definindo a dependência entre a tarefa `submit` e a
-    # tarefa `sensor`. Isso significa que a tarefa `sensor` só começará a ser executada
-    # após a tarefa `submit` for concluída com sucesso.
-    submit >> sensor
+    submit
     # [FIM task_sequence]
 
 
 # [FIM dag]
 
 # [INICIO start_dag]
-# `ingestion_from_landing_data_file_to_bronze_tables_dag()` está criando uma instância da DAG
-# `ingestion-from-landing-data-file-to-bronze-tables`. Esta função(instância) pode ser usada para
+# `silver_to_gold_dag()` está criando uma instância da DAG
+# `delivery-data-from-sap-hana-to-kafka`. Esta função(instância) pode ser usada para
 # iniciar a execução da DAG no Apache Airflow.
-ingestion_from_landing_data_file_to_bronze_tables_dag()
+silver_to_gold_dag()
 # [FIM start_dag]

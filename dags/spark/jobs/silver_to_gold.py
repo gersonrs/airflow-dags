@@ -1,10 +1,13 @@
 # import libraries
+from __future__ import annotations
+
 from os.path import abspath
 
 from delta import DeltaTable
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, current_timestamp
+from pyspark.sql.functions import col
+from pyspark.sql.functions import current_timestamp
 
 # set default location for warehouse
 warehouse_location = abspath("spark-warehouse")

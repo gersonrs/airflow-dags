@@ -13,13 +13,13 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-# [START import_module]
-# O objeto DAG; precisaremos disso para instanciar um DAG
 from airflow.decorators import dag
-
-# Operadores, precisamos que isso funcione!
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from airflow.utils.dates import days_ago
+
+# [START import_module]
+# O objeto DAG; precisaremos disso para instanciar um DAG
+# Operadores, precisamos que isso funcione!
 
 # [END import_module]
 
@@ -64,20 +64,20 @@ default_args = {
 
 # [INICIO dag]
 @dag(
-    dag_id="raw-to-bronze",
+    dag_id="bronze-to-silver",
     default_args=default_args,
     start_date=days_ago(1),
     catchup=False,
     schedule_interval="@daily",
     max_active_runs=1,
-    tags=["spark", "kubernetes", "sensor", "iceberg", "minio", "s3", "raw", "bronze"],
+    tags=["spark", "kubernetes", "sensor", "iceberg", "minio", "s3", "bronze", "silver"],
     doc_md=doc_md_DAG,
 )
-def raw_to_bronze_dag() -> None:
+def bronze_to_silver_dag() -> None:
     """
-    `raw_to_bronze_dag()` é uma função que define um DAG
+    `bronze_to_silver_dag()` é uma função que define um DAG
     (Directed Gráfico acíclico) no Apache Airflow. Este DAG é responsável por ingerir
-    dados de um csv para o minio. Consiste em duas tarefas:
+    dados de uma tabela bronze para uma tabela silver. Consiste em duas tarefas:
     """
 
     # [INICIO set_tasks]
@@ -88,9 +88,9 @@ def raw_to_bronze_dag() -> None:
     # de yaml para acionar o processo, usando o spark-on-k8s para operar com base nos
     # dados e criando um `SparkApplication` em contêiner.
     submit = SparkKubernetesOperator(
-        task_id="raw_to_bronze_submit",
+        task_id="bronze_to_silver_submit",
         namespace="processing",
-        application_file="raw_to_bronze.yaml",
+        application_file="bronze_to_silver.yaml",
         do_xcom_push=True,
         # O parâmetro `params` no `SparkKubernetesOperator` é usado para passar parâmetros
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
@@ -102,8 +102,8 @@ def raw_to_bronze_dag() -> None:
             "spark_executor_cores": 2,
             "spark_executor_instances": 1,
             "spark_executor_memory": "2G",
-            "spark_job_name": "raw-to-bronze",
-            "spark_file": "raw_to_bronze.py",
+            "spark_job_name": "bronze-to-silver",
+            "spark_file": "bronze_to_silver.py",
         },
         doc_md="""
         ### Proposta desta tarefa
@@ -124,8 +124,8 @@ def raw_to_bronze_dag() -> None:
 # [FIM dag]
 
 # [INICIO start_dag]
-# `raw_to_bronze_dag()` está criando uma instância da DAG
+# `bronze_to_silver_dag()` está criando uma instância da DAG
 # `delivery-data-from-sap-hana-to-kafka`. Esta função(instância) pode ser usada para
 # iniciar a execução da DAG no Apache Airflow.
-raw_to_bronze_dag()
+bronze_to_silver_dag()
 # [FIM start_dag]

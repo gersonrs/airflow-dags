@@ -1,17 +1,20 @@
 # import libraries
+from __future__ import annotations
+
 from os.path import abspath
 
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import (
-    col,
-    concat_ws,
-    current_timestamp,
-    from_json,
-    lit,
-    split,
-)
-from pyspark.sql.types import ArrayType, StringType, StructField, StructType
+from pyspark.sql.functions import col
+from pyspark.sql.functions import concat_ws
+from pyspark.sql.functions import current_timestamp
+from pyspark.sql.functions import from_json
+from pyspark.sql.functions import lit
+from pyspark.sql.functions import split
+from pyspark.sql.types import ArrayType
+from pyspark.sql.types import StringType
+from pyspark.sql.types import StructField
+from pyspark.sql.types import StructType
 
 # set default location for warehouse
 warehouse_location = abspath("spark-warehouse")
@@ -134,7 +137,7 @@ if __name__ == "__main__":
         col("schema").alias("movies_schema"),
     ).distinct()
 
-    def subscription_importance(subscription_plan):
+    def subscription_importance(subscription_plan: str) -> str:
         if subscription_plan in ("Business", "Diamond", "Gold", "Platinum", "Premium"):
             return "High"
         elif subscription_plan in (
