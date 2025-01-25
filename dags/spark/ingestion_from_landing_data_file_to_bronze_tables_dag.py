@@ -4,8 +4,8 @@ import os
 from datetime import datetime
 
 from airflow import DAG
+from airflow.operators.bash import BashOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-from airflow.providers.standard.operators.bash import BashOperator
 
 
 # [END howto_operator_k8s_cluster_resources]
