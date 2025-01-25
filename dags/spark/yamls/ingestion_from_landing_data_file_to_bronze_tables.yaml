@@ -85,6 +85,7 @@ spec:
           - --repo=git@github.com:GersonRS/airflow-dags.git
           - --root=/repo
           - --one-time
+          - --deep=5
         volumeMounts:
           - name: work-dir
             mountPath: /repo
