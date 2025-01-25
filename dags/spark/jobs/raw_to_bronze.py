@@ -1,17 +1,15 @@
+from __future__ import annotations
+
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
-from pyspark.sql.types import (
-    StructType,
-    StructField,
-    StringType,
-    IntegerType,
-    DoubleType,
-    TimestampType,
-)
-from pyspark.sql.functions import (
-    lit,
-    current_timestamp,
-)
+from pyspark.sql.functions import current_timestamp
+from pyspark.sql.functions import lit
+from pyspark.sql.types import DoubleType
+from pyspark.sql.types import IntegerType
+from pyspark.sql.types import StringType
+from pyspark.sql.types import StructField
+from pyspark.sql.types import StructType
+from pyspark.sql.types import TimestampType
 
 
 if __name__ == "__main__":

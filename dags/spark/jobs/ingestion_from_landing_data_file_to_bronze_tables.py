@@ -1,15 +1,18 @@
 # import libraries
 # get file size in python
+from __future__ import annotations
+
 import os
 from os.path import abspath
 from pathlib import Path
 
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import current_timestamp, lit
+from pyspark.sql.functions import current_timestamp
+from pyspark.sql.functions import lit
 
 
-def get_path_size(base_path):
+def get_path_size(base_path: str) -> int:
     PATH_MODELS = Path(base_path).parent
     total_size = 0
     for entry in os.listdir(str(PATH_MODELS)):

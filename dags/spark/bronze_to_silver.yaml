@@ -43,7 +43,7 @@ spec:
     - name: xcom
       emptyDir: {}
   driver:
-    cores: {{ params.spark_driver_cores }}
+    cores: "{{ params.spark_driver_cores }}"
     memory: "{{ params.spark_driver_memory }}"
     labels:
       version: 3.4.3
@@ -80,7 +80,8 @@ spec:
     sidecars:
       - name: airflow-xcom-sidecar
         image: alpine
-        command: ["sh", "-c", 'trap "exit 0" INT; while true; do sleep 1; done;']
+        command:
+          ["sh", "-c", 'trap "exit 0" INT; while true; do sleep 1; done;']
         volumeMounts:
           - name: xcom
             mountPath: /airflow/xcom
@@ -89,8 +90,8 @@ spec:
             cpu: "1m"
             memory: "10Mi"
   executor:
-    cores: {{ params.spark_executor_cores }}
-    instances: {{ params.spark_executor_instances }}
+    cores: "{{ params.spark_executor_cores }}"
+    instances: "{{ params.spark_executor_instances }}"
     memory: "{{ params.spark_executor_memory }}"
     labels:
       version: 3.4.3
