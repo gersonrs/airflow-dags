@@ -45,7 +45,7 @@ MAX_RESULTS_MLFLOW_LIST_EXPERIMENTS = 1000
     default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "feature engineering"],
 )
-def feature_eng() -> None:
+def feature_eng() -> None:  # noqa: C901
     start = EmptyOperator(task_id="start")
     end = EmptyOperator(
         task_id="end",
