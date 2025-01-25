@@ -14,6 +14,7 @@ from __future__ import annotations
 from datetime import timedelta
 
 from airflow.decorators import dag
+from airflow.operators.bash import BashOperator
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from airflow.providers.cncf.kubernetes.sensors.spark_kubernetes import SparkKubernetesSensor
 from airflow.utils.dates import days_ago
@@ -101,10 +102,10 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
             "spark_driver_cores": 2,
             "spark_driver_memory": "2G",
             "spark_executor_cores": 2,
-            "spark_executor_instances": 1,
+            "spark_executor_instances": 2,
             "spark_executor_memory": "2G",
             "spark_job_name": "ingestion-from-landing-data-file-to-bronze-tables",
-            "spark_file": "spark/jobs/ingestion_from_landing_data_file_to_bronze_tables.py",
+            "spark_file": "ingestion_from_landing_data_file_to_bronze_tables.py",
         },
         doc_md="""
         ### Proposta desta tarefa
@@ -114,6 +115,10 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
         * Definir um yaml para acionar o processo, usando o spark-on-k8s para operar com base nos
         dados e criando um `SparkApplication` em contêiner.
         """,
+    )
+    pod_task_xcom_result = BashOperator(
+        bash_command="echo \"{{ task_instance.xcom_pull(task_ids='ingestion_from_landing_data_file_to_bronze_tables_submit') }}\"",  # noqa: E501
+        task_id="pod_task_xcom_result",
     )
     # A variável(task) `sensor` está criando uma instância da classe
     # `SparkKubernetesSensor`. Este sensor é responsável por monitorar o status de um
@@ -145,7 +150,7 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
     # `submit >> sensor` está definindo a dependência entre a tarefa `submit` e a
     # tarefa `sensor`. Isso significa que a tarefa `sensor` só começará a ser executada
     # após a tarefa `submit` for concluída com sucesso.
-    submit >> sensor
+    submit >> pod_task_xcom_result >> sensor
     # [FIM task_sequence]
 
 
