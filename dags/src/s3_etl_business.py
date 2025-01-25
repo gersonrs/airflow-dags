@@ -1,15 +1,17 @@
+from __future__ import annotations
+
 import os
 from datetime import datetime
 from io import BytesIO
-from typing import Tuple
 
 import pandas as pd
 from minio import Minio
 
-from utils.constants import CURATED_ZONE, PROCESSING_ZONE
+from dags.utils.constants import CURATED_ZONE
+from dags.utils.constants import PROCESSING_ZONE
 
 
-def read_business_json_data(*file: Tuple[str]) -> str:
+def read_business_json_data(*file: tuple[str]) -> str:
     client: Minio = Minio(
         os.getenv("S3_ENDPOINT_URL"),
         os.getenv("S3_ACCESS_KEY"),
