@@ -44,7 +44,7 @@ TARGET_COLUMN = "target"
     default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "Train"],
 )
-def train() -> None:
+def train() -> None:  # noqa: C901
     start = EmptyOperator(task_id="start")
     end = EmptyOperator(task_id="end", outlets=[Dataset("model_trained")])
 

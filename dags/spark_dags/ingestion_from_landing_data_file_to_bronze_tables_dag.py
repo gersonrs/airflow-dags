@@ -13,14 +13,14 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-# [START import_module]
-# O objeto DAG; precisaremos disso para instanciar um DAG
 from airflow.decorators import dag
-
-# Operadores, precisamos que isso funcione!
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from airflow.providers.cncf.kubernetes.sensors.spark_kubernetes import SparkKubernetesSensor
 from airflow.utils.dates import days_ago
+
+# [START import_module]
+# O objeto DAG; precisaremos disso para instanciar um DAG
+# Operadores, precisamos que isso funcione!
 
 # [END import_module]
 
@@ -58,7 +58,6 @@ default_args = {
     "email_on_retry": False,
     "retries": 0,
     "retry_delay": timedelta(1),
-    "pool": "slow_pool",
 }
 # [FIM default_args]
 
@@ -92,13 +91,12 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
     submit = SparkKubernetesOperator(
         task_id="ingestion_from_landing_data_file_to_bronze_tables_submit",
         namespace="processing",
-        application_file="spark_jobs/ingestion_from_landing_data_file_to_bronze_tables.yaml",
+        application_file="../spark_jobs/ingestion_from_landing_data_file_to_bronze_tables.yaml",
         kubernetes_conn_id="conn_kubernetes",
         do_xcom_push=True,
         # O parâmetro `params` no `SparkKubernetesOperator` é usado para passar parâmetros
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
-        queue="kubernetes",
         params={
             "spark_driver_cores": 2,
             "spark_driver_memory": "2G",
