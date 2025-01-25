@@ -46,6 +46,7 @@ jobs:
         uses: py-actions/flake8@v1
         with:
           max-line-length: 100
+          args: "--config=.flake8"
 
   # mypy:
   #   # or specify a path!
