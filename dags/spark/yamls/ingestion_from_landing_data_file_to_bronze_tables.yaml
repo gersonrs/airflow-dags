@@ -63,11 +63,11 @@ spec:
     terminationGracePeriodSeconds: 360
     envSecretKeyRefs:
       AWS_ACCESS_KEY_ID:
-        name: spark-ds-bg
-        key: CONSOLE_ACCESS_KEY
+        name: minio-secret
+        key: access-key
       AWS_SECRET_ACCESS_KEY:
-        name: spark-ds-bg
-        key: CONSOLE_SECRET_KEY
+        name: minio-secret
+        key: secret-access-key
     secrets:
       - name: git-creds
         path: /etc/git-secret
@@ -109,11 +109,11 @@ spec:
     serviceAccount: default
     envSecretKeyRefs:
       AWS_ACCESS_KEY_ID:
-        name: spark-ds-bg
-        key: CONSOLE_ACCESS_KEY
+        name: minio-secret
+        key: access-key
       AWS_SECRET_ACCESS_KEY:
-        name: spark-ds-bg
-        key: CONSOLE_SECRET_KEY
+        name: minio-secret
+        key: secret-access-key
     volumeMounts:
       - name: work-dir
         mountPath: /repo
