@@ -16,8 +16,10 @@
 # specific language governing permissions and limitations
 # under the License.
 ---
-apiVersion: "sparkoperator.k8s.io/v1beta2"
+apiVersion: sparkoperator.k8s.io/v1beta2
+version: v1beta2
 kind: SparkApplication
+apiGroup: sparkoperator.k8s.io
 metadata:
   name: "{{ params.spark_job_name }}-{{ ds_nodash }}"
   labels:
@@ -29,7 +31,6 @@ spec:
   mode: cluster
   image: gersonrs/spark:latest
   imagePullPolicy: IfNotPresent
-  # mainApplicationFile: local:///opt/spark/examples/src/main/python/pi.py
   mainApplicationFile: "local:///repo/airflow_dags.git/dags/{{ params.spark_file }}"
   sparkVersion: 3.5.0
   timeToLiveSeconds: 360
