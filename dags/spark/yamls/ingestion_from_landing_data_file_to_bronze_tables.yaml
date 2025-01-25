@@ -55,7 +55,7 @@ spec:
     # - name: xcom
     #   emptyDir: {}
   driver:
-    cores: "{{ params.spark_driver_cores }}"
+    cores: {{ params.spark_driver_cores }}
     memory: "{{ params.spark_driver_memory }}"
     labels:
       version: 3.5.0
@@ -101,8 +101,8 @@ spec:
     #         cpu: "1m"
     #         memory: "10Mi"
   executor:
-    cores: "{{ params.spark_executor_cores }}"
-    instances: "{{ params.spark_executor_instances }}"
+    cores: {{ params.spark_executor_cores }}
+    instances: {{ params.spark_executor_instances }}
     memory: "{{ params.spark_executor_memory }}"
     labels:
       version: 3.5.0
