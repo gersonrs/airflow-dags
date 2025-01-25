@@ -11,8 +11,8 @@ from airflow.providers.amazon.aws.operators.s3 import S3ListOperator
 from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
 from airflow.utils.dates import days_ago
 
+from dags.src.s3_etl_business import read_business_json_data
 from dags.utils.constants import PROCESSING_ZONE
-from src.s3_etl_business import read_business_json_data
 
 # [START import_module]
 # [START env_variables]
