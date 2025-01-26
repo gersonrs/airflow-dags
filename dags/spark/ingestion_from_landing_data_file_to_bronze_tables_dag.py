@@ -94,16 +94,15 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
         namespace="processing",
         application_file="yamls/ingestion_from_landing_data_file_to_bronze_tables.yaml",
         kubernetes_conn_id="conn_kubernetes",
-        do_xcom_push=False,
         # O parâmetro `params` no `SparkKubernetesOperator` é usado para passar parâmetros
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
         params={
-            "spark_driver_cores": 2,
-            "spark_driver_memory": "2G",
-            "spark_executor_cores": 2,
-            "spark_executor_instances": 2,
-            "spark_executor_memory": "2G",
+            "spark_driver_cores": 1,
+            "spark_driver_memory": "1G",
+            "spark_executor_cores": 1,
+            "spark_executor_instances": 1,
+            "spark_executor_memory": "1G",
             "spark_job_name": "ingestion-from-landing-data-file-to-bronze-tables",
             "spark_file": "ingestion_from_landing_data_file_to_bronze_tables.py",
         },
