@@ -31,7 +31,7 @@ from airflow.utils.dates import days_ago
 # [FIM import_module]
 # Documentação baseada em Markdown que serão renderizados nas páginas Grid , Graph e Calendar.
 doc_md_DAG = """
-# DAG Entrega dos dados que vem de um csv para uma tabela iceberg no minio
+# DAG Entrega dos dados que vem da landing para uma tabela bronze
 
 Este é um exemplo de DAG que usa SparkKubernetesOperator e SparkKubernetesSensor.
 Neste exemplo, crio duas tarefas que são executadas sequencialmente.
@@ -40,8 +40,8 @@ E a segunda tarefa é verificar o estado final do sparkApplication que enviou no
 
 ## Objetivo desta DAG
 
-* Processar todos os dados da raw zone referentes aos dados de torre e passar para uma tabela
-iceberg no minio
+* Processar todos os dados da bronze zone referentes aos dados de user,subscription,movies
+e credit_card, passando para uma tabela na camada silver no minio
 
 Execute para testar.
 """
@@ -57,27 +57,27 @@ default_args = {
     "email_on_retry": False,
     "retries": 0,
     "retry_delay": timedelta(1),
-    "pool": "slow_pool",
 }
 # [FIM default_args]
 
 
 # [INICIO dag]
 @dag(
-    dag_id="bronze-to-silver",
+    dag_id="transform-and-enrichment-from-bronze-to-silver",
     default_args=default_args,
     start_date=days_ago(1),
     catchup=False,
     schedule_interval="@daily",
     max_active_runs=1,
-    tags=["spark", "kubernetes", "sensor", "iceberg", "minio", "s3", "bronze", "silver"],
+    tags=["spark", "kubernetes", "delta", "minio", "s3", "bronze", "silver"],
     doc_md=doc_md_DAG,
 )
-def bronze_to_silver_dag() -> None:
+def transform_and_enrichment_from_bronze_to_silver_dag() -> None:
     """
-    `bronze_to_silver_dag()` é uma função que define um DAG
-    (Directed Gráfico acíclico) no Apache Airflow. Este DAG é responsável por ingerir
-    dados de uma tabela bronze para uma tabela silver. Consiste em duas tarefas:
+    `transform_and_enrichment_from_bronze_to_silver_dag()` é uma função que define um DAG
+    (Directed Gráfico acíclico) no Apache Airflow. Este DAG é responsável por enriquecer
+    dados da bronze, processar e colocar em uma tabela delta na camada silver.
+    Consiste em uma tarefa:
     """
 
     # [INICIO set_tasks]
@@ -88,22 +88,21 @@ def bronze_to_silver_dag() -> None:
     # de yaml para acionar o processo, usando o spark-on-k8s para operar com base nos
     # dados e criando um `SparkApplication` em contêiner.
     submit = SparkKubernetesOperator(
-        task_id="bronze_to_silver_submit",
+        task_id="transform_and_enrichment_from_bronze_to_silver_submit",
         namespace="processing",
-        application_file="bronze_to_silver.yaml",
-        do_xcom_push=True,
+        application_file="yamls/transform_and_enrichment_from_bronze_to_silver.yaml",
+        kubernetes_conn_id="conn_kubernetes",
         # O parâmetro `params` no `SparkKubernetesOperator` é usado para passar parâmetros
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
-        queue="kubernetes",
         params={
             "spark_driver_cores": 2,
             "spark_driver_memory": "2G",
             "spark_executor_cores": 2,
-            "spark_executor_instances": 1,
+            "spark_executor_instances": 2,
             "spark_executor_memory": "2G",
-            "spark_job_name": "bronze-to-silver",
-            "spark_file": "bronze_to_silver.py",
+            "spark_job_name": "transform-and-enrichment-from-bronze-to-silver",
+            "spark_file": "transform_and_enrichment_from_bronze_to_silver.py",
         },
         doc_md="""
         ### Proposta desta tarefa
@@ -124,8 +123,8 @@ def bronze_to_silver_dag() -> None:
 # [FIM dag]
 
 # [INICIO start_dag]
-# `bronze_to_silver_dag()` está criando uma instância da DAG
-# `delivery-data-from-sap-hana-to-kafka`. Esta função(instância) pode ser usada para
+# `transform_and_enrichment_from_bronze_to_silver_dag()` está criando uma instância da DAG
+# `transform-and-enrichment-from-bronze-to-silver`. Esta função(instância) pode ser usada para
 # iniciar a execução da DAG no Apache Airflow.
-bronze_to_silver_dag()
+transform_and_enrichment_from_bronze_to_silver_dag()
 # [FIM start_dag]

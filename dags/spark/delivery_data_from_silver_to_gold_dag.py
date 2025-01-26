@@ -31,7 +31,7 @@ from airflow.utils.dates import days_ago
 # [FIM import_module]
 # Documentação baseada em Markdown que serão renderizados nas páginas Grid , Graph e Calendar.
 doc_md_DAG = """
-# DAG Entrega dos dados que vem de um csv para uma tabela iceberg no minio
+# DAG Entrega dos dados que estão na camada silver para a camada gold
 
 Este é um exemplo de DAG que usa SparkKubernetesOperator e SparkKubernetesSensor.
 Neste exemplo, crio duas tarefas que são executadas sequencialmente.
@@ -40,8 +40,8 @@ E a segunda tarefa é verificar o estado final do sparkApplication que enviou no
 
 ## Objetivo desta DAG
 
-* Processar todos os dados da raw zone referentes aos dados de torre e passar para uma tabela
-iceberg no minio
+* Processar todos os dados da silver zone referentes aos dados de subscribers e voters, passando
+para uma tabela na camada gold no minio
 
 Execute para testar.
 """
@@ -57,27 +57,27 @@ default_args = {
     "email_on_retry": False,
     "retries": 0,
     "retry_delay": timedelta(1),
-    "pool": "slow_pool",
 }
 # [FIM default_args]
 
 
 # [INICIO dag]
 @dag(
-    dag_id="raw-to-bronze",
+    dag_id="delivery-data-from-silver-to-gold",
     default_args=default_args,
     start_date=days_ago(1),
     catchup=False,
     schedule_interval="@daily",
     max_active_runs=1,
-    tags=["spark", "kubernetes", "sensor", "iceberg", "minio", "s3", "raw", "bronze"],
+    tags=["spark", "kubernetes", "delta", "minio", "s3", "silver", "gold"],
     doc_md=doc_md_DAG,
 )
-def raw_to_bronze_dag() -> None:
+def delivery_data_from_silver_to_gold_dag() -> None:
     """
-    `raw_to_bronze_dag()` é uma função que define um DAG
+    `delivery_data_from_silver_to_gold_dag()` é uma função que define um DAG
     (Directed Gráfico acíclico) no Apache Airflow. Este DAG é responsável por ingerir
-    dados de um csv para o minio. Consiste em duas tarefas:
+    dados da silver, processar e colocar em uma tabela delta na camada gold.
+    Consiste em uma tarefa:
     """
 
     # [INICIO set_tasks]
@@ -88,22 +88,21 @@ def raw_to_bronze_dag() -> None:
     # de yaml para acionar o processo, usando o spark-on-k8s para operar com base nos
     # dados e criando um `SparkApplication` em contêiner.
     submit = SparkKubernetesOperator(
-        task_id="raw_to_bronze_submit",
+        task_id="delivery_data_from_silver_to_gold_submit",
         namespace="processing",
-        application_file="raw_to_bronze.yaml",
-        do_xcom_push=True,
+        application_file="yamls/delivery_data_from_silver_to_gold.yaml",
+        kubernetes_conn_id="conn_kubernetes",
         # O parâmetro `params` no `SparkKubernetesOperator` é usado para passar parâmetros
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
-        queue="kubernetes",
         params={
             "spark_driver_cores": 2,
             "spark_driver_memory": "2G",
             "spark_executor_cores": 2,
-            "spark_executor_instances": 1,
+            "spark_executor_instances": 2,
             "spark_executor_memory": "2G",
-            "spark_job_name": "raw-to-bronze",
-            "spark_file": "raw_to_bronze.py",
+            "spark_job_name": "delivery-data-from-silver-to-gold",
+            "spark_file": "delivery_data_from_silver_to_gold.py",
         },
         doc_md="""
         ### Proposta desta tarefa
@@ -124,8 +123,8 @@ def raw_to_bronze_dag() -> None:
 # [FIM dag]
 
 # [INICIO start_dag]
-# `raw_to_bronze_dag()` está criando uma instância da DAG
-# `delivery-data-from-sap-hana-to-kafka`. Esta função(instância) pode ser usada para
+# `delivery_data_from_silver_to_gold_dag()` está criando uma instância da DAG
+# `delivery-data-from-silver-to-gold`. Esta função(instância) pode ser usada para
 # iniciar a execução da DAG no Apache Airflow.
-raw_to_bronze_dag()
+delivery_data_from_silver_to_gold_dag()
 # [FIM start_dag]

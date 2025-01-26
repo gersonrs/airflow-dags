@@ -69,7 +69,7 @@ default_args = {
     catchup=False,
     schedule_interval="@daily",
     max_active_runs=1,
-    tags=["spark", "kubernetes", "sensor", "iceberg", "minio", "s3", "raw", "bronze"],
+    tags=["spark", "kubernetes", "delta", "minio", "s3", "landing", "bronze"],
     doc_md=doc_md_DAG,
 )
 def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
