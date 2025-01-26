@@ -95,8 +95,6 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
         application_file="yamls/ingestion_from_landing_data_file_to_bronze_tables.yaml",
         kubernetes_conn_id="conn_kubernetes",
         do_xcom_push=False,
-        get_logs=True,
-        deferrable=True,
         # O parâmetro `params` no `SparkKubernetesOperator` é usado para passar parâmetros
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
