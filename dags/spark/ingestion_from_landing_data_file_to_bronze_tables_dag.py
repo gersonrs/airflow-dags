@@ -116,7 +116,7 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
         """,
     )
     pod_task_xcom_result = BashOperator(
-        bash_command="echo \"{{ task_instance.xcom_pull(task_ids='ingestion_from_landing_data_file_to_bronze_tables_submit')[0] }}\"",  # noqa: E501
+        bash_command="echo \"{{ task_instance.xcom_pull(task_ids='ingestion_from_landing_data_file_to_bronze_tables_submit')['pod_name'] }}\"",  # noqa: E501
         task_id="pod_task_xcom_result",
     )
     # A variável(task) `sensor` está criando uma instância da classe
@@ -128,7 +128,7 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
     sensor = SparkKubernetesSensor(
         task_id="ingestion_from_landing_data_file_to_bronze_tables_sensor",
         namespace="processing",
-        application_name="{{task_instance.xcom_pull(task_ids='ingestion_from_landing_data_file_to_bronze_tables_submit')['metadata']['name']}}",  # noqa: E501
+        application_name="{{task_instance.xcom_pull(task_ids='ingestion_from_landing_data_file_to_bronze_tables_submit')['pod_name']}}",  # noqa: E501
         kubernetes_conn_id="conn_kubernetes",
         attach_log=True,
         doc_md="""
