@@ -96,11 +96,11 @@ def delivery_data_from_silver_to_gold_dag() -> None:
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
         params={
-            "spark_driver_cores": 2,
-            "spark_driver_memory": "2G",
-            "spark_executor_cores": 2,
-            "spark_executor_instances": 2,
-            "spark_executor_memory": "2G",
+            "spark_driver_cores": 1,
+            "spark_driver_memory": "1G",
+            "spark_executor_cores": 1,
+            "spark_executor_instances": 1,
+            "spark_executor_memory": "1G",
             "spark_job_name": "delivery-data-from-silver-to-gold",
             "spark_file": "delivery_data_from_silver_to_gold.py",
         },

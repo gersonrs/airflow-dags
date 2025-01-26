@@ -96,11 +96,11 @@ def transform_and_enrichment_from_bronze_to_silver_dag() -> None:
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
         params={
-            "spark_driver_cores": 2,
-            "spark_driver_memory": "2G",
-            "spark_executor_cores": 2,
-            "spark_executor_instances": 2,
-            "spark_executor_memory": "2G",
+            "spark_driver_cores": 1,
+            "spark_driver_memory": "1G",
+            "spark_executor_cores": 1,
+            "spark_executor_instances": 1,
+            "spark_executor_memory": "1G",
             "spark_job_name": "transform-and-enrichment-from-bronze-to-silver",
             "spark_file": "transform_and_enrichment_from_bronze_to_silver.py",
         },
