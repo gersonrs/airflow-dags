@@ -57,6 +57,8 @@ if __name__ == "__main__":
         .json(get_users_file)
     )
 
+    df_user.printSchema()
+
     df_user = (
         df_user.withColumn("ingestion_time", lit(current_timestamp()))
         .withColumn("source_system", lit("local"))
@@ -75,6 +77,8 @@ if __name__ == "__main__":
         .option("header", "true")
         .json(get_subscription_file)
     )
+
+    df_subscription.printSchema()
 
     df_subscription = (
         df_subscription.withColumn("ingestion_time", lit(current_timestamp()))
@@ -95,6 +99,8 @@ if __name__ == "__main__":
         .json(get_credit_card_file)
     )
 
+    df_credit_card.printSchema()
+
     df_credit_card = (
         df_credit_card.withColumn("ingestion_time", lit(current_timestamp()))
         .withColumn("source_system", lit("local"))
@@ -113,6 +119,8 @@ if __name__ == "__main__":
         .option("header", "true")
         .json(get_movies_file)
     )
+
+    df_movies.printSchema()
 
     df_movies = (
         df_movies.withColumn("ingestion_time", lit(current_timestamp()))
