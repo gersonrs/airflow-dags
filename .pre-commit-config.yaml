@@ -12,8 +12,8 @@ repos:
       - id: pretty-format-json
         args: ["--autofix"]
         exclude: "Pipfile.lock"
-      # - id: no-commit-to-branch
-      #   args: ["--branch", "main"]
+      - id: no-commit-to-branch
+        args: ["--branch", "main"]
   - repo: https://github.com/asottile/reorder-python-imports
     rev: v3.14.0
     hooks:
