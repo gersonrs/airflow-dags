@@ -14,9 +14,7 @@ from __future__ import annotations
 from datetime import timedelta
 
 from airflow.decorators import dag
-from airflow.operators.bash import BashOperator
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
-from airflow.providers.cncf.kubernetes.sensors.spark_kubernetes import SparkKubernetesSensor
 from airflow.utils.dates import days_ago
 
 # [START import_module]
@@ -98,11 +96,11 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
         params={
-            "spark_driver_cores": 1,
-            "spark_driver_memory": "1G",
-            "spark_executor_cores": 1,
-            "spark_executor_instances": 1,
-            "spark_executor_memory": "1G",
+            "spark_driver_cores": 2,
+            "spark_driver_memory": "2G",
+            "spark_executor_cores": 2,
+            "spark_executor_instances": 2,
+            "spark_executor_memory": "2G",
             "spark_job_name": "ingestion-from-landing-data-file-to-bronze-tables",
             "spark_file": "ingestion_from_landing_data_file_to_bronze_tables.py",
         },
@@ -115,41 +113,10 @@ def ingestion_from_landing_data_file_to_bronze_tables_dag() -> None:
         dados e criando um `SparkApplication` em contêiner.
         """,
     )
-    pod_task_xcom_result = BashOperator(
-        bash_command="echo \"{{ task_instance.xcom_pull(task_ids='ingestion_from_landing_data_file_to_bronze_tables_submit')['pod_name'] }}\"",  # noqa: E501
-        task_id="pod_task_xcom_result",
-    )
-    # A variável(task) `sensor` está criando uma instância da classe
-    # `SparkKubernetesSensor`. Este sensor é responsável por monitorar o status de um
-    # `SparkApplication` em execução em um cluster Kubernetes. Usando o sensor para ler
-    # e visualizar o resultado do `SparkApplication`, lê do xcom e verifica o par de
-    # status [chave e valor] do `submit`, contenco o nome do `SparkApplication` e
-    # passando para o `SparkKubernetesSensor`.
-    sensor = SparkKubernetesSensor(
-        task_id="ingestion_from_landing_data_file_to_bronze_tables_sensor",
-        namespace="processing",
-        application_name="{{task_instance.xcom_pull(task_ids='ingestion_from_landing_data_file_to_bronze_tables_submit')['pod_name']}}",  # noqa: E501
-        kubernetes_conn_id="conn_kubernetes",
-        attach_log=True,
-        doc_md="""
-        ### Proposta desta tarefa
-
-        * Ser responsável por monitorar o status de um `SparkApplication` em execução em um cluster
-        Kubernetes.
-
-        * Usar o sensor para ler e visualizar o resultado do `SparkApplication`.
-
-        * Ler do xcom e verifica o par de status [chave e valor] do `submit`, contenco o nome do
-        `SparkApplication` e passando para o `SparkKubernetesSensor`.
-        """,
-    )
     # [FIM set_tasks]
 
     # [INICIO task_sequence]
-    # `submit >> sensor` está definindo a dependência entre a tarefa `submit` e a
-    # tarefa `sensor`. Isso significa que a tarefa `sensor` só começará a ser executada
-    # após a tarefa `submit` for concluída com sucesso.
-    submit >> pod_task_xcom_result >> sensor
+    submit
     # [FIM task_sequence]
 
 
