@@ -7,8 +7,8 @@ from io import BytesIO
 import pandas as pd
 from minio import Minio
 
-from utils.constants import CURATED_ZONE
-from utils.constants import PROCESSING_ZONE
+from dags.utils.constants import CURATED_ZONE
+from dags.utils.constants import PROCESSING_ZONE
 
 
 def read_business_json_data(*file: tuple[str]) -> str:
