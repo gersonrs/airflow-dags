@@ -55,7 +55,7 @@ jobs:
       - name: mypy check
         uses: jpetrucciani/mypy-check@master
         with:
-          mypy_flags: "--config-file .mypy.ini"
+          mypy_flags: "--config-file mypy.ini"
 
   tests:
     runs-on: ubuntu-latest
