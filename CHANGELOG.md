@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0](https://github.com/GersonRS/airflow-dags/compare/v1.1.0...v1.2.0) (2025-02-08)
+
+
+### 🚀 New Features
+
+* new project ([dc62cf6](https://github.com/GersonRS/airflow-dags/commit/dc62cf6d8f5618625a18136179ade5ad3836daba))
+
+
+### ⌨️ Code Refactoring
+
+* adjust env secrets ([a327c56](https://github.com/GersonRS/airflow-dags/commit/a327c5691212b9a18958ae40c230dd985c0a0f3c))
+* adjust env secrets ([2183611](https://github.com/GersonRS/airflow-dags/commit/2183611fd5be8dd749398c544d7121c5bc6961f7))
+* adjust env secrets ([3496d98](https://github.com/GersonRS/airflow-dags/commit/3496d9810418054ef4a48f59684205048415747f))
+* adjust things ([19683d7](https://github.com/GersonRS/airflow-dags/commit/19683d73958e1a10375dfd1079ec10c84ad1919f))
+* adjust things ([7880b6e](https://github.com/GersonRS/airflow-dags/commit/7880b6e2de85b22681bac0ff1d947fd5b38f20b4))
+* adjust workflows ([fcf76b9](https://github.com/GersonRS/airflow-dags/commit/fcf76b9edb75a5059d666e68382fa571ee7b56e9))
+
 ## [1.1.0](https://github.com/GersonRS/airflow-dags/compare/v1.0.0...v1.1.0) (2025-01-26)
 
 
