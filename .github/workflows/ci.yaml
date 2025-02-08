@@ -29,10 +29,9 @@ jobs:
           body: |
             There appear to be some python formatting errors in ${{ github.sha }}. This pull request
             uses the [psf/black](https://github.com/psf/black) formatter to fix these issues.
-          base: ${{ github.head_ref }} # Creates pull request onto pull request or commit branch
+          base: ${{ github.head_ref }}
           branch: actions/black
 
-  #  https://github.com/py-actions/flake8
   flake8:
     runs-on: ubuntu-latest
     steps:
@@ -60,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [black, flake8]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -89,4 +88,12 @@ jobs:
 
       - run: find dags/ -type f -name '*.py' -exec sed -i 's/from dags./from /g' {} \; -ls
 
+      - uses: stefanzweifel/git-auto-commit-action@v5
+
+  adjust-imports:
+    runs-on: ubuntu-latest
+    needs: [black, flake8]
+    steps:
+      - uses: actions/checkout@v4
+      - run: find dags/ -type f -name '*.py' -exec sed -i 's/from dags./from /g' {} \; -ls
       - uses: stefanzweifel/git-auto-commit-action@v5
