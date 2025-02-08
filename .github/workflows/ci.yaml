@@ -51,6 +51,7 @@ jobs:
     # or specify a path!
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: mypy check
         uses: jpetrucciani/mypy-check@master
         with:
@@ -58,7 +59,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    needs: [black, flake8]
+    needs: [black, flake8, mypy]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Python
