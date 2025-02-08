@@ -6,7 +6,8 @@ on:
 permissions:
   id-token: write
   packages: write
-  contents: read
+  contents: write
+  pull-requests: write
   attestations: write
 
 jobs:
@@ -29,10 +30,9 @@ jobs:
           body: |
             There appear to be some python formatting errors in ${{ github.sha }}. This pull request
             uses the [psf/black](https://github.com/psf/black) formatter to fix these issues.
-          base: ${{ github.head_ref }} # Creates pull request onto pull request or commit branch
+          base: ${{ github.head_ref }}
           branch: actions/black
 
-  #  https://github.com/py-actions/flake8
   flake8:
     runs-on: ubuntu-latest
     steps:
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [black, flake8]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -87,6 +87,15 @@ jobs:
         run: |
           python -m poetry run python -m pytest -sxv
 
+  adjust-imports:
+    if: startsWith(github.head_ref, 'release')
+    runs-on: ubuntu-latest
+    needs: [black, flake8, tests]
+    steps:
+      - uses: actions/checkout@v4
       - run: find dags/ -type f -name '*.py' -exec sed -i 's/from dags./from /g' {} \; -ls
-
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      # This step avoids a commit for each previous step and instead commits everything on a single commit
+      - name: "Commit changes done in the previous steps"
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "refactor(bot): refactor files"
