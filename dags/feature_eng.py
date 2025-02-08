@@ -14,7 +14,6 @@ from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.files import File
 from mlflow_provider.hooks.client import MLflowClientHook
-
 from utils.constants import default_args
 
 log = logging.getLogger(__name__)

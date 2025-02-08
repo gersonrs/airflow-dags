@@ -4,13 +4,18 @@
 This DAG will produce messages consisting of several elements to a Kafka cluster and consume
 them.
 """
+from __future__ import annotations
 
-from airflow.decorators import dag, task
-from pendulum import datetime
-from airflow.providers.apache.kafka.operators.produce import ProduceToTopicOperator
-from airflow.providers.apache.kafka.operators.consume import ConsumeFromTopicOperator
 import json
 import random
+from collections.abc import Generator
+from typing import Any
+
+from airflow.decorators import dag
+from airflow.decorators import task
+from airflow.providers.apache.kafka.operators.consume import ConsumeFromTopicOperator
+from airflow.providers.apache.kafka.operators.produce import ProduceToTopicOperator
+from pendulum import datetime
 
 YOUR_NAME = "Gerson"
 YOUR_PET_NAME = "Delphi"
@@ -18,7 +23,7 @@ NUMBER_OF_TREATS = 5
 KAFKA_TOPIC = "connection_test"
 
 
-def prod_function(num_treats, pet_name):
+def prod_function(num_treats: int, pet_name: str) -> Generator[tuple[str, str], Any, None]:
     """Produces `num_treats` messages containing the pet's name, a randomly picked
     pet mood post treat and whether or not it was the last treat in a series."""
 
@@ -41,7 +46,7 @@ def prod_function(num_treats, pet_name):
         )
 
 
-def consume_function(message, name):
+def consume_function(message: Any, name: str) -> None:
     "Takes in consumed messages and prints its contents to the logs."
 
     key = json.loads(message.key())
@@ -60,17 +65,17 @@ def consume_function(message, name):
     catchup=False,
     render_template_as_native_obj=True,
 )
-def produce_consume_treats():
+def produce_consume_treats() -> None:
     @task
-    def get_your_pet_name(pet_name=None):
+    def get_your_pet_name(pet_name: Any = None) -> Any:
         return pet_name
 
     @task
-    def get_number_of_treats(num_treats=None):
+    def get_number_of_treats(num_treats: Any = None) -> Any:
         return num_treats
 
     @task
-    def get_pet_owner_name(your_name=None):
+    def get_pet_owner_name(your_name: Any = None) -> Any:
         return your_name
 
     produce_treats = ProduceToTopicOperator(

@@ -13,7 +13,6 @@ from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.files import File
-
 from utils.constants import default_args
 
 FEATURE_FILE_PATH = "features.parquet"

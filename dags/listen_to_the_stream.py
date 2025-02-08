@@ -6,21 +6,24 @@ which causes the funtion supplied to the `apply_function` parameter to return a 
 If a value is returned by the `apply_function`, the `event_triggered_function` is
 executed. Afterwards the task will go into a deferred state again.
 """
+from __future__ import annotations
+
+import json
+import uuid
+from typing import Any
 
 from airflow.decorators import dag
-from pendulum import datetime
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.apache.kafka.sensors.kafka import (
     AwaitMessageTriggerFunctionSensor,
 )
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
-import json
-import uuid
+from pendulum import datetime
 
 PET_MOODS_NEEDING_A_WALK = ["zoomy", "bouncy"]
 KAFKA_TOPIC = "my_topic"
 
 
-def listen_function(message, pet_moods_needing_a_walk=[]):
+def listen_function(message: Any, pet_moods_needing_a_walk: list[Any] = []) -> Any:
     """Checks if the message received indicates a pet is in
     a mood listed in `pet_moods_needing_a_walk` when they received the last
     treat of a treat-series."""
@@ -35,7 +38,7 @@ def listen_function(message, pet_moods_needing_a_walk=[]):
             return pet_name, pet_mood_post_treat
 
 
-def event_triggered_function(event, **context):
+def event_triggered_function(event: list[str], **context: dict[str, Any]) -> None:
     "Kicks off a downstream DAG with conf and waits for its completion."
 
     pet_name = event[0]
@@ -45,7 +48,7 @@ def event_triggered_function(event, **context):
     TriggerDagRunOperator(
         trigger_dag_id="walking_my_pet",
         task_id=f"triggered_downstream_dag_{uuid.uuid4()}",
-        wait_for_completion=True,  # wait for downstream DAG completion
+        wait_for_completion=True,
         conf={"pet_name": pet_name},
         poke_interval=5,
     ).execute(context)
@@ -60,7 +63,7 @@ def event_triggered_function(event, **context):
     catchup=False,
     render_template_as_native_obj=True,
 )
-def listen_to_the_stream():
+def listen_to_the_stream() -> None:
     listen_for_mood = AwaitMessageTriggerFunctionSensor(
         task_id="listen_for_mood",
         kafka_config_id="kafka_listener",

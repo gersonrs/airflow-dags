@@ -1,8 +1,13 @@
+from __future__ import annotations
+
+from datetime import datetime
+from datetime import timedelta
+from typing import Any
+
+import pandas as pd
+import requests
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import datetime, timedelta
-import requests
-import pandas as pd
 
 default_args = {
     "owner": "airflow",
@@ -23,7 +28,7 @@ dag = DAG(
 )
 
 
-def check_api_available():
+def check_api_available() -> None:
     url = "https://api.github.com"
     response = requests.get(url)
     response.raise_for_status()  # Lança uma exceção se o status não for 200
@@ -36,7 +41,7 @@ check_api_task = PythonOperator(
 )
 
 
-def extract_github_data():
+def extract_github_data() -> None:
     url = "https://api.github.com/search/repositories?q=language:python&sort=stars&order=desc"
     response = requests.get(url)
     response.raise_for_status()
@@ -50,8 +55,8 @@ extract_data_task = PythonOperator(
 )
 
 
-def process_github_data(**context):
-    data = context["ti"].xcom_pull(task_ids="extract_github_data")
+def process_github_data(**context: dict[str, Any]) -> None:
+    data = context["ti"].xcom_pull(task_ids="extract_github_data")  # type: ignore
     repositories = data["items"]
     languages = [repo["language"] for repo in repositories]
     df = pd.DataFrame(languages, columns=["language"])

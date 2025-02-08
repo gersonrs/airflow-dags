@@ -37,9 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: flake8 Lint
@@ -47,14 +47,14 @@ jobs:
         with:
           args: "--config=.flake8"
 
-  # mypy:
-  #   # or specify a path!
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: mypy check
-  #       uses: jpetrucciani/mypy-check@master
-  #       with:
-  #         path: '.'
+  mypy:
+    # or specify a path!
+    runs-on: ubuntu-latest
+    steps:
+      - name: mypy check
+        uses: jpetrucciani/mypy-check@master
+        with:
+          mypy_flags: "--config-file .mypy.ini"
 
   tests:
     runs-on: ubuntu-latest
