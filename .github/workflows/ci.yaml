@@ -6,7 +6,8 @@ on:
 permissions:
   id-token: write
   packages: write
-  contents: read
+  contents: write
+  pull-requests: write
   attestations: write
 
 jobs:
@@ -92,7 +93,7 @@ jobs:
 
   adjust-imports:
     runs-on: ubuntu-latest
-    needs: [black, flake8]
+    needs: [black, flake8, tests]
     steps:
       - uses: actions/checkout@v4
       - run: find dags/ -type f -name '*.py' -exec sed -i 's/from dags./from /g' {} \; -ls
