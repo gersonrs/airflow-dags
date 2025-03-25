@@ -88,7 +88,7 @@ def show_case_uber_eats_dag() -> None:
     # de yaml para acionar o processo, usando o spark-on-k8s para operar com base nos
     # dados e criando um `SparkApplication` em contêiner.
     show_case_uber_eats_bronze_ingestion = SparkKubernetesOperator(
-        task_id="show_case_uber_eats_submit",
+        task_id="bronze_ingestion",
         namespace="processing",
         application_file="yamls/show_case_uber_eats.yaml",
         kubernetes_conn_id="conn_kubernetes",
@@ -115,7 +115,7 @@ def show_case_uber_eats_dag() -> None:
     )
 
     show_case_uber_eats_silver_transformation = SparkKubernetesOperator(
-        task_id="show_case_uber_eats_submit",
+        task_id="silver_transformation",
         namespace="processing",
         application_file="yamls/show_case_uber_eats.yaml",
         kubernetes_conn_id="conn_kubernetes",
@@ -142,7 +142,7 @@ def show_case_uber_eats_dag() -> None:
     )
 
     show_case_uber_eats_gold_dataset = SparkKubernetesOperator(
-        task_id="show_case_uber_eats_submit",
+        task_id="gold_dataset",
         namespace="processing",
         application_file="yamls/show_case_uber_eats.yaml",
         kubernetes_conn_id="conn_kubernetes",

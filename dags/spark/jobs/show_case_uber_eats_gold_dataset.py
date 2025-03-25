@@ -105,5 +105,13 @@ if __name__ == "__main__":
     # Salvar no Hive como tabela Delta
     df_gold.write.format("delta").mode("overwrite").saveAsTable("uber.gold_delivery_ml_ready")
 
+    # Persistindo em Parquet (modo overwrite para sobrescrever se já existir)
+    df_gold.write.mode("overwrite").parquet("s3a://gold/delivery_dataset/")
+
+    # Persistindo em CSV (com header, separador padrão, e sobrescrevendo também)
+    df_gold.topandas().to_csv(
+        "s3://gold/delivery_dataset_csv/uber_gold_delivery_ml_ready.csv", index=False
+    )
+
     # stop session
     spark.stop()
