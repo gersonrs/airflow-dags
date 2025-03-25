@@ -67,7 +67,6 @@ spec:
         args:
           - --repo=git@github.com:GersonRS/airflow-dags.git
           - --root=/repo
-          - --ref=develop
           - --one-time
           - --depth=5
         volumeMounts:
