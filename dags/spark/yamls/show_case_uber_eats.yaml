@@ -41,7 +41,7 @@ spec:
     - name: work-dir
       emptyDir: {}
   driver:
-    cores: { { params.spark_driver_cores } }
+    cores: "{{ params.spark_driver_cores }}"
     memory: "{{ params.spark_driver_memory }}"
     labels:
       version: 3.5.0
@@ -75,8 +75,8 @@ spec:
           - name: git-creds-volume
             mountPath: /etc/git-secret
   executor:
-    cores: { { params.spark_executor_cores } }
-    instances: { { params.spark_executor_instances } }
+    cores: "{{ params.spark_executor_cores }}"
+    instances: "{{ params.spark_executor_instances }}"
     memory: "{{ params.spark_executor_memory }}"
     labels:
       version: 3.5.0
