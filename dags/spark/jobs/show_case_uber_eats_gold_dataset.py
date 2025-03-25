@@ -99,7 +99,7 @@ if __name__ == "__main__":
         "multiple_deliveries",
         "Festival",
         "City",
-        "Time_taken(min)",
+        "Time_taken",
     )
 
     # Salvar no Hive como tabela Delta
