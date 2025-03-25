@@ -96,7 +96,7 @@ if __name__ == "__main__":
         df.withColumn("order_time", to_timestamp("order_placed"))
         .withColumn("pickup_time", to_timestamp("order_picked"))
         .withColumn(
-            "Time_taken(min)", (unix_timestamp("pickup_time") - unix_timestamp("order_time")) / 60
+            "Time_taken", (unix_timestamp("pickup_time") - unix_timestamp("order_time")) / 60
         )
     )
 
@@ -122,7 +122,7 @@ if __name__ == "__main__":
         "restaurant_longitude",
         "order_time",
         "pickup_time",
-        "Time_taken(min)",
+        "Time_taken",
         "Delivery_person_Age",
         "Delivery_person_Ratings",
         "Vehicle_condition",
