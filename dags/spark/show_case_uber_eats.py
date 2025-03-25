@@ -96,11 +96,11 @@ def show_case_uber_eats_dag() -> None:
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
         params={
-            "spark_driver_cores": 1,
-            "spark_driver_memory": "1G",
-            "spark_executor_cores": 1,
+            "spark_driver_cores": 2,
+            "spark_driver_memory": "2G",
+            "spark_executor_cores": 2,
             "spark_executor_instances": 1,
-            "spark_executor_memory": "1G",
+            "spark_executor_memory": "4G",
             "spark_job_name": "show-case-uber-eats-bronze-ingestion",
             "spark_file": "show_case_uber_eats_bronze_ingestion.py",
         },
@@ -123,11 +123,11 @@ def show_case_uber_eats_dag() -> None:
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
         params={
-            "spark_driver_cores": 1,
-            "spark_driver_memory": "1G",
-            "spark_executor_cores": 1,
+            "spark_driver_cores": 2,
+            "spark_driver_memory": "2G",
+            "spark_executor_cores": 2,
             "spark_executor_instances": 1,
-            "spark_executor_memory": "1G",
+            "spark_executor_memory": "4G",
             "spark_job_name": "show-case-uber-eats-silver-transformation",
             "spark_file": "show_case_uber_eats_silver_transformation.py",
         },
@@ -150,11 +150,11 @@ def show_case_uber_eats_dag() -> None:
         # adicionais para o `SparkApplication` que será executado no cluster Kubernetes.
         # Esses parâmetros podem ser acessados no código do aplicativo Spark.
         params={
-            "spark_driver_cores": 1,
-            "spark_driver_memory": "1G",
-            "spark_executor_cores": 1,
+            "spark_driver_cores": 2,
+            "spark_driver_memory": "2G",
+            "spark_executor_cores": 2,
             "spark_executor_instances": 1,
-            "spark_executor_memory": "1G",
+            "spark_executor_memory": "4G",
             "spark_job_name": "show-case-uber-eats-gold-dataset",
             "spark_file": "show_case_uber_eats_gold_dataset.py",
         },
