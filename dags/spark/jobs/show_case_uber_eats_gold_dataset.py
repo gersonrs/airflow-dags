@@ -109,9 +109,9 @@ if __name__ == "__main__":
     df_gold.write.mode("overwrite").parquet("s3a://gold/delivery_dataset/")
 
     # Persistindo em CSV (com header, separador padrão, e sobrescrevendo também)
-    df_gold.toPandas().to_csv(
-        "s3://gold/delivery_dataset_csv/uber_gold_delivery_ml_ready.csv", index=False
-    )
+    # df_gold.toPandas().to_csv(
+    #     "s3://gold/delivery_dataset_csv/uber_gold_delivery_ml_ready.csv", index=False
+    # )
 
     # stop session
     spark.stop()
