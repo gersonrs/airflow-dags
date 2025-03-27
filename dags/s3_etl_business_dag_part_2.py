@@ -10,9 +10,8 @@ from airflow.providers.amazon.aws.operators.s3 import S3DeleteObjectsOperator
 from airflow.providers.amazon.aws.operators.s3 import S3ListOperator
 from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
 from airflow.utils.dates import days_ago
+from src.s3_etl_business import read_business_json_data
 from utils.constants import PROCESSING_ZONE
-
-from dags.src.s3_etl_business import read_business_json_data
 
 # [START import_module]
 # [START env_variables]

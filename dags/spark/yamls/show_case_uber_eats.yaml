@@ -5,7 +5,7 @@ apiGroup: sparkoperator.k8s.io
 metadata:
   name: "{{ params.spark_job_name }}-{{ ds_nodash }}"
   labels:
-    date: "{{ ds_nodash }}"
+    date: "{{ task_instance_key_str }}"
   namespace: processing
 spec:
   type: Python
@@ -15,7 +15,7 @@ spec:
   imagePullPolicy: IfNotPresent
   mainApplicationFile: "local:///repo/airflow-dags.git/dags/spark/jobs/{{ params.spark_file }}"
   sparkVersion: 3.5.0
-  timeToLiveSeconds: 360
+  timeToLiveSeconds: 30
   restartPolicy:
     type: OnFailure
     onFailureRetries: 1
@@ -40,6 +40,17 @@ spec:
   volumes:
     - name: work-dir
       emptyDir: {}
+  dynamicAllocation:
+    enabled: true
+    initialExecutors: 1
+    maxExecutors: 5
+    minExecutors: 1
+  monitoring:
+    exposeDriverMetrics: true
+    exposeExecutorMetrics: true
+    prometheus:
+      jmxExporterJar: /prometheus/jmx_prometheus_javaagent-0.11.0.jar
+      port: 8090
   driver:
     cores: {{ params.spark_driver_cores }}
     memory: "{{ params.spark_driver_memory }}"
