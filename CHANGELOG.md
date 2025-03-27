@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.1](https://github.com/GersonRS/airflow-dags/compare/v1.2.0...v1.2.1) (2025-02-08)
+
+
+### ⌨️ Code Refactoring
+
+* adjust things ([b778f7d](https://github.com/GersonRS/airflow-dags/commit/b778f7d30cd5ea7c1ddd25b006c1e38680a18b1d))
+* refactor and adjust code for mypy ([03901d9](https://github.com/GersonRS/airflow-dags/commit/03901d9856fd628be9cf669885a775880c92782c))
+* refactor and adjust code for mypy ([eaa32ea](https://github.com/GersonRS/airflow-dags/commit/eaa32eadc592238f105c5e5c77e58cd5fc4e7093))
+* refactor and adjust code for mypy ([71b1764](https://github.com/GersonRS/airflow-dags/commit/71b17644f8eefcd2152a1cbe145d7df578d617f6))
+* try adjust code ([c4293f5](https://github.com/GersonRS/airflow-dags/commit/c4293f540db6225f5eea2895d5435221793886cf))
+* try adjust code ([91243f7](https://github.com/GersonRS/airflow-dags/commit/91243f7f933286a0a828bf843350d0e1544e4efb))
+* try adjust code 2 ([773f8ec](https://github.com/GersonRS/airflow-dags/commit/773f8ec1f2f312413edc8eb7243e29ac1f7dec5f))
+* try adjust code 4 ([7b3e323](https://github.com/GersonRS/airflow-dags/commit/7b3e323db3215dba9b13eb535f299e3a7372d43b))
+* try adjust code 5 ([5cf735d](https://github.com/GersonRS/airflow-dags/commit/5cf735db10f6feb3f91f3b6a674904b1750d2936))
+
 ## [1.2.0](https://github.com/GersonRS/airflow-dags/compare/v1.1.0...v1.2.0) (2025-02-08)
 
 
