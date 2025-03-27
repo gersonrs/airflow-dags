@@ -18,7 +18,6 @@ from utils.constants import PROCESSING_ZONE
 
 # from airflow.decorators import task
 
-
 # [END env_variables]
 
 # [END import_module]
