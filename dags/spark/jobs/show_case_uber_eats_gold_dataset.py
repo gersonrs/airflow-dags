@@ -106,7 +106,7 @@ if __name__ == "__main__":
     df_gold.write.format("delta").mode("overwrite").saveAsTable("uber.gold_delivery_ml_ready")
 
     # Persistindo em Parquet (modo overwrite para sobrescrever se já existir)
-    df_gold.write.mode("overwrite").parquet("s3a://gold/delivery_dataset/")
+    df_gold.filter("ID IS NOT NULL").write.mode("overwrite").parquet("s3a://gold/delivery_dataset/")
 
     spark.sql("SHOW TABLES IN uber").show()
 

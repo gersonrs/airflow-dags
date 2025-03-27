@@ -13,7 +13,9 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+from airflow import Dataset
 from airflow.decorators import dag
+from airflow.operators.empty import EmptyOperator
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from airflow.utils.dates import days_ago
 
@@ -73,6 +75,12 @@ default_args = {
     doc_md=doc_md_DAG,
 )
 def show_case_uber_eats_dag() -> None:
+    start = EmptyOperator(task_id="start")
+    end = EmptyOperator(
+        task_id="end",
+        outlets=[Dataset("s3://gold/delivery_dataset/")],
+    )
+
     """
     `show_case_uber_eats_dag()` é uma função que define um DAG
     (Directed Gráfico acíclico) no Apache Airflow. Este DAG é responsável por ingerir
@@ -172,9 +180,11 @@ def show_case_uber_eats_dag() -> None:
 
     # [INICIO task_sequence]
     (
-        show_case_uber_eats_bronze_ingestion
+        start
+        >> show_case_uber_eats_bronze_ingestion
         >> show_case_uber_eats_silver_transformation
         >> show_case_uber_eats_gold_dataset
+        >> end
     )
     # [FIM task_sequence]
 
