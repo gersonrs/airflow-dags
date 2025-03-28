@@ -45,10 +45,6 @@ spec:
   #   initialExecutors: 1
   #   maxExecutors: 5
   #   minExecutors: 1
-  monitoring:
-    exposeDriverMetrics: true
-    prometheus:
-      jmxExporterJar: /prometheus/jmx_prometheus_javaagent-0.11.0.jar
   driver:
     cores: {{ params.spark_driver_cores }}
     memory: "{{ params.spark_driver_memory }}"
