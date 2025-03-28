@@ -104,7 +104,7 @@ if __name__ == "__main__":
     df_gold.write.format("delta").mode("overwrite").save("s3a://gold/uber/delivery_ml_ready")
 
     # Persistindo em Parquet (modo overwrite para sobrescrever se já existir)
-    df = df_gold.filter("ID IS NOT NULL").toDF()
+    df = df_gold.toDF()
     df.write.parquet("s3a://gold/datasets/delivery.parquet", mode="overwrite")
     # df_gold.write.mode("overwrite").parquet("s3a://gold/delivery_dataset/")
 
