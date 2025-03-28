@@ -20,9 +20,7 @@ if __name__ == "__main__":
     # set log level
     spark.sparkContext.setLogLevel("INFO")
 
-    spark.sql("SHOW TABLES IN uber").show()
-
-    df = spark.table("uber.silver_deliveries")
+    df = spark.read.format("delta").load("s3a://silver/uber/deliveries")
 
     @udf("int")
     def age_from_birth(date_birth: str) -> int | None:
@@ -103,12 +101,12 @@ if __name__ == "__main__":
     )
 
     # Salvar no Hive como tabela Delta
-    df_gold.write.format("delta").mode("overwrite").saveAsTable("uber.gold_delivery_ml_ready")
+    df_gold.write.format("delta").mode("overwrite").save("s3a://gold/uber/delivery_ml_ready")
 
     # Persistindo em Parquet (modo overwrite para sobrescrever se já existir)
-    df_gold.filter("ID IS NOT NULL").write.mode("overwrite").parquet("s3a://gold/delivery_dataset/")
-
-    spark.sql("SHOW TABLES IN uber").show()
+    df_gold.filter("ID IS NOT NULL").write.mode("overwrite").parquet(
+        "s3a://gold/delivery_dataset/dataset_complete.parquet"
+    )
 
     df.printSchema()
     df.show(5)

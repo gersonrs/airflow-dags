@@ -17,8 +17,8 @@ if __name__ == "__main__":
     # set log level
     spark.sparkContext.setLogLevel("INFO")
 
+    spark.sql("DROP DATABASE IF EXISTS uber")
     # spark.sql("CREATE DATABASE IF NOT EXISTS uber LOCATION 's3a://warehouse/uber'")
-    spark.sql("DROP DATABASE IF NOT EXISTS uber")
 
     # spark.sql("SHOW TABLES IN uber").show()
 
@@ -37,10 +37,9 @@ if __name__ == "__main__":
         path = f"{base_path}{relative_path}"
         print(f"\nIniciando ingestão de {entity} do caminho: {path}")
         df = spark.read.json(path)
-        df.write.format("delta").mode("overwrite").saveAsTable(f"uber.bronze_{entity}")
+        df.write.format("delta").mode("overwrite").save(f"s3a://bronze/uber/{entity}")
         print(f"✓ Ingestão da entidade '{entity}' concluída.")
-        print(f"Schema de uber.bronze_{entity}")
-        spark.table(f"uber.bronze_{entity}").printSchema()
+        df.printSchema()
 
     # stop session
     spark.stop()

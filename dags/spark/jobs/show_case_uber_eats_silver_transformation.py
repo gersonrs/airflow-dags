@@ -24,8 +24,6 @@ if __name__ == "__main__":
     # set log level
     spark.sparkContext.setLogLevel("INFO")
 
-    spark.sql("SHOW TABLES IN uber").show()
-
     # Função auxiliar para simular latitude e longitude dentro dos limites de São Paulo
     def generate_coordinates(df: DataFrame, lat_col: str, lon_col: str) -> DataFrame:
         return df.withColumn(
@@ -33,16 +31,16 @@ if __name__ == "__main__":
         ).withColumn(lon_col, expr("rand() * (46.754930 - 46.365570) + -46.754930"))
 
     # Simular localização dos usuários
-    users = spark.table("uber.bronze_users_mssql")
+    users = spark.read.format("delta").load("s3a://bronze/uber/users_mssql")
     users = generate_coordinates(users, "delivery_latitude", "delivery_longitude")
 
     # Simular localização dos restaurantes
-    restaurants = spark.table("uber.bronze_restaurants")
+    restaurants = spark.read.format("delta").load("s3a://bronze/uber/restaurants")
     restaurants = generate_coordinates(restaurants, "restaurant_latitude", "restaurant_longitude")
 
-    orders = spark.table("uber.bronze_orders")
-    status = spark.table("uber.bronze_status")
-    drivers = spark.table("uber.bronze_drivers")
+    orders = spark.read.format("delta").load("s3a://bronze/uber/orders")
+    status = spark.read.format("delta").load("s3a://bronze/uber/status")
+    drivers = spark.read.format("delta").load("s3a://bronze/uber/drivers")
 
     # Processamento dos status para obter tempos de ordem e coleta
     status_flat = status.select(
@@ -134,7 +132,7 @@ if __name__ == "__main__":
     df.show(5)
 
     # Salvar como camada silver consolidada
-    df.write.format("delta").mode("overwrite").saveAsTable("uber.silver_deliveries")
+    df.write.format("delta").mode("overwrite").save("s3a://silver/uber/deliveries")
 
     # stop session
     spark.stop()

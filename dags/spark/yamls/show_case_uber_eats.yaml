@@ -33,7 +33,10 @@ spec:
     spark.delta.logStore.class: "org.apache.spark.sql.delta.storage.S3SingleDriverLogStore"
     spark.sql.extensions: "io.delta.sql.DeltaSparkSessionExtension"
     spark.sql.catalog.spark_catalog: "org.apache.spark.sql.delta.catalog.DeltaCatalog"
+    spark.sql.catalogImplementation: "hive"
+    spark.hive.metastore.uris: "thrift://hive-metastore.metastore.svc.cluster.local:9083"
     spark.sql.execution.arrow.pyspark.enabled: "true"
+    spark.sql.warehouse.dir: "s3a://warehouse/"
   volumes:
     - name: work-dir
       emptyDir: {}
