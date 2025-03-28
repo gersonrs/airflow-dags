@@ -15,7 +15,7 @@ spec:
   imagePullPolicy: IfNotPresent
   mainApplicationFile: "local:///repo/airflow-dags.git/dags/spark/jobs/{{ params.spark_file }}"
   sparkVersion: 3.5.0
-  timeToLiveSeconds: 30
+  timeToLiveSeconds: 3600
   restartPolicy:
     type: OnFailure
     onFailureRetries: 1
@@ -47,10 +47,8 @@ spec:
   #   minExecutors: 1
   monitoring:
     exposeDriverMetrics: true
-    exposeExecutorMetrics: true
     prometheus:
       jmxExporterJar: /prometheus/jmx_prometheus_javaagent-0.11.0.jar
-      port: 8090
   driver:
     cores: {{ params.spark_driver_cores }}
     memory: "{{ params.spark_driver_memory }}"
