@@ -148,3 +148,4 @@ minio_data/
 node_modules
 package-lock.json
 public
+include/*

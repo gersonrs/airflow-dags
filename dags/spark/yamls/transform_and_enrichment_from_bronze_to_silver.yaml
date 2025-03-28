@@ -11,7 +11,7 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: gersonrs/spark:v1.2.0
+  image: gersonrs/spark:v1.4.0
   imagePullPolicy: IfNotPresent
   mainApplicationFile: "local:///repo/airflow-dags.git/dags/spark/jobs/{{ params.spark_file }}"
   sparkVersion: 3.5.0

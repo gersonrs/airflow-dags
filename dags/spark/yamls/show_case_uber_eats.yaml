@@ -5,17 +5,17 @@ apiGroup: sparkoperator.k8s.io
 metadata:
   name: "{{ params.spark_job_name }}-{{ ds_nodash }}"
   labels:
-    date: "{{ ds_nodash }}"
+    date: "{{ task_instance_key_str }}"
   namespace: processing
 spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: gersonrs/spark:v1.4.0
+  image: gersonrs/spark:v1.4.1
   imagePullPolicy: IfNotPresent
   mainApplicationFile: "local:///repo/airflow-dags.git/dags/spark/jobs/{{ params.spark_file }}"
   sparkVersion: 3.5.0
-  timeToLiveSeconds: 360
+  timeToLiveSeconds: 30
   restartPolicy:
     type: OnFailure
     onFailureRetries: 1
@@ -33,9 +33,24 @@ spec:
     spark.delta.logStore.class: "org.apache.spark.sql.delta.storage.S3SingleDriverLogStore"
     spark.sql.extensions: "io.delta.sql.DeltaSparkSessionExtension"
     spark.sql.catalog.spark_catalog: "org.apache.spark.sql.delta.catalog.DeltaCatalog"
+    spark.sql.catalogImplementation: "hive"
+    spark.hive.metastore.uris: "thrift://hive-metastore.metastore.svc.cluster.local:9083"
+    spark.sql.execution.arrow.pyspark.enabled: "true"
+    spark.sql.warehouse.dir: "s3a://warehouse/"
   volumes:
     - name: work-dir
       emptyDir: {}
+  dynamicAllocation:
+    enabled: true
+    initialExecutors: 1
+    maxExecutors: 5
+    minExecutors: 1
+  monitoring:
+    exposeDriverMetrics: true
+    exposeExecutorMetrics: true
+    prometheus:
+      jmxExporterJar: /prometheus/jmx_prometheus_javaagent-0.11.0.jar
+      port: 8090
   driver:
     cores: {{ params.spark_driver_cores }}
     memory: "{{ params.spark_driver_memory }}"
@@ -63,6 +78,7 @@ spec:
         args:
           - --repo=git@github.com:GersonRS/airflow-dags.git
           - --root=/repo
+          - --ref=develop
           - --one-time
           - --depth=5
         volumeMounts:

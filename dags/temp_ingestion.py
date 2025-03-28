@@ -9,13 +9,13 @@ import logging
 import os
 
 import pandas as pd
+from airflow import Dataset
 from airflow.decorators import dag
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.amazon.aws.operators.s3 import S3CreateBucketOperator
 from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.files import File
-
 from utils.constants import default_args
 
 log = logging.getLogger(__name__)
@@ -27,6 +27,8 @@ DATA_FILE_PATH = "data.parquet"
 AWS_CONN_ID = "conn_minio_s3"
 DATA_BUCKET_NAME = "data"
 MLFLOW_ARTIFACT_BUCKET = "mlflow"
+
+XCOM_BUCKET = "localxcom"
 
 
 @dag(
@@ -40,12 +42,15 @@ MLFLOW_ARTIFACT_BUCKET = "mlflow"
 )
 def generate_values() -> None:
     start = EmptyOperator(task_id="start")
-    end = EmptyOperator(task_id="end")
+    end = EmptyOperator(
+        task_id="end",
+        outlets=[Dataset("astro+s3://conn_minio_s3@data/data.parquet")],
+    )
 
     create_buckets_if_not_exists = S3CreateBucketOperator.partial(
         task_id="create_buckets_if_not_exists",
         aws_conn_id=AWS_CONN_ID,
-    ).expand(bucket_name=[DATA_BUCKET_NAME, MLFLOW_ARTIFACT_BUCKET])
+    ).expand(bucket_name=[DATA_BUCKET_NAME, MLFLOW_ARTIFACT_BUCKET, XCOM_BUCKET])
 
     @aql.dataframe()
     def generate_df_values() -> pd.DataFrame:
