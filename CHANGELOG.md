@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.3.0](https://github.com/GersonRS/airflow-dags/compare/v1.2.1...v1.3.0) (2025-03-28)
+
+
+### 🚀 New Features
+
+* add new dags ([e5a5103](https://github.com/GersonRS/airflow-dags/commit/e5a51031da89032e00c61fe5e19b052bd672f951))
+* adjust spark config ([2bdc94f](https://github.com/GersonRS/airflow-dags/commit/2bdc94f20e73b4eaf2e6a4416f3e42e639d49841))
+* config gold layer ([9e3950f](https://github.com/GersonRS/airflow-dags/commit/9e3950fb2f8ab8c3ef616b73ca157a3ab471bb63))
+* delete uber data metadata store ([a7662ca](https://github.com/GersonRS/airflow-dags/commit/a7662ca4e06df306f855d0d8d59092c770b04ece))
+* dont save csv ([c0b0fdf](https://github.com/GersonRS/airflow-dags/commit/c0b0fdfedcd8a07120191134ba141ac9d17903be))
+* finish experiments ([de88d0d](https://github.com/GersonRS/airflow-dags/commit/de88d0d4e0c741e670af3506f18d78fb7e4be02f))
+* print schema and metastore tables ([163499b](https://github.com/GersonRS/airflow-dags/commit/163499b15e0af6cb49316fa35a2838827fab2eff))
+* remove salve csv ([c232636](https://github.com/GersonRS/airflow-dags/commit/c2326362f1857aa150a3a1902a5f053c071f561d))
+* test new commit ([f686acd](https://github.com/GersonRS/airflow-dags/commit/f686acde1f841dccea16b050fe2a6992a5f6b059))
+* update spark image ([ac95738](https://github.com/GersonRS/airflow-dags/commit/ac95738168b08502dffca7dedae4da44ce10b63a))
+* update spark image ([98551e3](https://github.com/GersonRS/airflow-dags/commit/98551e330d4c86a327a0da158b5cf8e914f5e6f1))
+* update spark image ([8d7af07](https://github.com/GersonRS/airflow-dags/commit/8d7af07fbac7fec0c7a4bdfb2b08bca8e62efe91))
+
+
+### 🔥 Bug Fixes
+
+* add ref to develop branch ([8a74b31](https://github.com/GersonRS/airflow-dags/commit/8a74b3104baf293f03cc0a4e6bc26a2fea40374f))
+* fix sintax topandas ([ce0370f](https://github.com/GersonRS/airflow-dags/commit/ce0370f7e400655dd6a2a681f7807cd444e97f75))
+* invalid character in the column names in my gold schema ([6c74f90](https://github.com/GersonRS/airflow-dags/commit/6c74f90da6bdbc32cb8917271cf2c394b2c28973))
+* invalid character in the column names in my schema ([09440af](https://github.com/GersonRS/airflow-dags/commit/09440af4238c8930dbe31b92b3d48b0ba18a32f9))
+* remove ref to develop branch ([6be8108](https://github.com/GersonRS/airflow-dags/commit/6be8108b90d2ae31e619dfd82c654c9c2f43774d))
+* template jinja ([5145dd3](https://github.com/GersonRS/airflow-dags/commit/5145dd36ec268d9ca0bed46f08086ddd35c4ba4e))
+* template jinja ([86ddad1](https://github.com/GersonRS/airflow-dags/commit/86ddad1c57b8cccf5f1ba5aff21bdd2950a2e78b))
+
+
+### ⌨️ Code Refactoring
+
+* upgrade resources dag ([566a522](https://github.com/GersonRS/airflow-dags/commit/566a5225d4625f426efc1bc7de0f1ab78635b6a8))
+
 ## [1.2.1](https://github.com/GersonRS/airflow-dags/compare/v1.2.0...v1.2.1) (2025-02-08)
 
 
