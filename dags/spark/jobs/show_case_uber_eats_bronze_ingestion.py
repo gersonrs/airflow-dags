@@ -36,7 +36,9 @@ if __name__ == "__main__":
         path = f"{base_path}{relative_path}"
         print(f"\nIniciando ingestão de {entity} do caminho: {path}")
         df = spark.read.json(path)
-        df.write.format("delta").mode("overwrite").saveAsTable(f"uber.bronze_{entity}")
+        df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable(
+            f"uber.bronze_{entity}"
+        )
         print(f"✓ Ingestão da entidade '{entity}' concluída.")
         print(f"Schema de uber.bronze_{entity}")
         spark.table(f"uber.bronze_{entity}").printSchema()

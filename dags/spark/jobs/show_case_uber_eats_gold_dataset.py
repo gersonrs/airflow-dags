@@ -103,7 +103,9 @@ if __name__ == "__main__":
     )
 
     # Salvar no Hive como tabela Delta
-    df_gold.write.format("delta").mode("overwrite").saveAsTable("uber.gold_delivery_ml_ready")
+    df_gold.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable(
+        "uber.gold_delivery_ml_ready"
+    )
 
     # Persistindo em Parquet (modo overwrite para sobrescrever se já existir)
     df_gold.filter("ID IS NOT NULL").write.mode("overwrite").parquet("s3a://gold/delivery_dataset/")
