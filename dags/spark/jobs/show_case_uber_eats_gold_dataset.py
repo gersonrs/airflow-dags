@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     # Persistindo em Parquet (modo overwrite para sobrescrever se já existir)
     df = df_gold.filter("ID IS NOT NULL").toDF()
-    df = df.write.parquet("s3a://gold/datasets/delivery.parquet", mode="overwrite")
+    df.write.parquet("s3a://gold/datasets/delivery.parquet", mode="overwrite")
     # df_gold.write.mode("overwrite").parquet("s3a://gold/delivery_dataset/")
 
     df.printSchema()
