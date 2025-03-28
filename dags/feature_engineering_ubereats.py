@@ -6,8 +6,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-import pyarrow.parquet as pq
-import s3fs
 from airflow import Dataset
 from airflow.decorators import dag
 from airflow.decorators import task
@@ -19,6 +17,7 @@ from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.dataframes.pandas import DataFrame
 from astro.files import File
+from deltalake import DeltaTable
 from mlflow_provider.hooks.client import MLflowClientHook
 from src.feature_engineer_common import haversine_vector
 
@@ -159,20 +158,29 @@ def feature_engineering_ubereats() -> None:  # noqa: C901
 
     @aql.dataframe()
     def extract_data() -> pd.DataFrame:
-        # Recupera as credenciais do Airflow Connection
+        # Recupera as credenciais da conexão do Airflow
         conn = BaseHook.get_connection("conn_minio_s3")
         extra = conn.extra_dejson
 
-        fs = s3fs.S3FileSystem(
-            key=extra.get("aws_access_key_id"),
-            secret=extra.get("aws_secret_access_key"),
-            client_kwargs={"endpoint_url": extra.get("endpoint_url")},
-        )
+        # Configurações do S3/MinIO
+        s3_options = {
+            "AWS_ACCESS_KEY_ID": extra.get("aws_access_key_id"),
+            "AWS_SECRET_ACCESS_KEY": extra.get("aws_secret_access_key"),
+            "AWS_ENDPOINT_URL": extra.get(
+                "endpoint_url"
+            ),  # exemplo: http://host.docker.internal:9000
+        }
 
-        dataset_path = "gold/delivery_dataset/"
-        dataset = pq.ParquetDataset(dataset_path, filesystem=fs)
-        table = dataset.read()
-        return table.to_pandas()
+        # Caminho da tabela Delta no MinIO
+        delta_path = "s3://gold/delivery_dataset/"
+
+        # Lê a tabela Delta
+        dt = DeltaTable(delta_path, storage_options=s3_options)
+
+        # Converte para Pandas
+        df = dt.to_pandas()
+
+        return df
 
     extracted_df = extract_data()
     # extracted_df = aql.load_file(
