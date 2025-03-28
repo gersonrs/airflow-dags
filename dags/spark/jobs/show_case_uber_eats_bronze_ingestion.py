@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # set log level
     spark.sparkContext.setLogLevel("INFO")
 
-    spark.sql("DROP DATABASE uber")
+    # spark.sql("DROP DATABASE uber")
     # spark.sql("CREATE DATABASE IF NOT EXISTS uber LOCATION 's3a://warehouse/uber'")
 
     # spark.sql("SHOW TABLES IN uber").show()
