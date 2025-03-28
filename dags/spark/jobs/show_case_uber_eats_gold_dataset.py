@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import random
 
+from delta.tables import DeltaTable
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import expr
@@ -104,7 +105,8 @@ if __name__ == "__main__":
     df_gold.write.format("delta").mode("overwrite").save("s3a://gold/uber/delivery_ml_ready")
 
     # Persistindo em Parquet (modo overwrite para sobrescrever se já existir)
-    df = df_gold.toDF()
+    delta_table = DeltaTable.forPath(spark, "s3a://gold/uber/delivery_ml_ready")
+    df = delta_table.toDF()
     df.write.parquet("s3a://gold/datasets/delivery.parquet", mode="overwrite")
     # df_gold.write.mode("overwrite").parquet("s3a://gold/delivery_dataset/")
 
