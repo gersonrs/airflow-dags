@@ -134,9 +134,8 @@ if __name__ == "__main__":
     df.show(5)
 
     # Salvar como camada silver consolidada
-    df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable(
-        "uber.silver_deliveries"
-    )
+    spark.sql("DROP TABLE IF EXISTS uber.silver_deliveries")
+    df.write.format("delta").saveAsTable("uber.silver_deliveries")
 
     # stop session
     spark.stop()
