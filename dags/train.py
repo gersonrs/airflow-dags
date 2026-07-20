@@ -39,7 +39,7 @@ TARGET_COLUMN = "target"
     default_args=default_args,
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    schedule=[Asset("s3://" + DATA_BUCKET_NAME + "/temp/" + FILE_PATH)],
+    schedule="@once",
     default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "Train"],
 )

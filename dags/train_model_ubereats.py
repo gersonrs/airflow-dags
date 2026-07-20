@@ -38,7 +38,7 @@ TARGET_COLUMN = "Time_taken"
     default_args=default_args,
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    schedule=[Asset(f"s3://{DATA_BUCKET_NAME}/uber/{FEATURE_FILE_PATH}")],
+    schedule="@once",
     tags=["ubereats", "ml", "regression", "mlflow", "training"],
     default_view="graph",
 )
