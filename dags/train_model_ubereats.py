@@ -6,6 +6,7 @@ from typing import Any
 
 from airflow.decorators import dag, task, task_group
 from airflow.operators.empty import EmptyOperator
+from airflow.sdk import Asset
 from astro import sql as aql
 from astro.dataframes.pandas import DataFrame
 from mlflow_provider.hooks.client import MLflowClientHook
@@ -16,8 +17,6 @@ from mlflow_provider.operators.registry import (
 )
 from src.feature_engineer_common import create_model
 from utils.constants import default_args
-
-from airflow import Dataset
 
 os.environ["GIT_PYTHON_REFRESH"] = "quiet"
 
@@ -39,13 +38,13 @@ TARGET_COLUMN = "Time_taken"
     default_args=default_args,
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    schedule=[Dataset(f"s3://{DATA_BUCKET_NAME}/uber/{FEATURE_FILE_PATH}")],
+    schedule=[Asset(f"s3://{DATA_BUCKET_NAME}/uber/{FEATURE_FILE_PATH}")],
     tags=["ubereats", "ml", "regression", "mlflow", "training"],
     default_view="graph",
 )
 def train_model_ubereats() -> None:
     start = EmptyOperator(task_id="start")
-    end = EmptyOperator(task_id="end", outlets=[Dataset("ubereats_model_trained")])
+    end = EmptyOperator(task_id="end", outlets=[Asset("ubereats_model_trained")])
 
     @task
     def fetch_feature_df(**context: Any) -> DataFrame:

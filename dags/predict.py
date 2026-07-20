@@ -9,6 +9,7 @@ import pandas as pd
 import seaborn as sns
 from airflow.decorators import dag, task
 from airflow.operators.empty import EmptyOperator
+from airflow.sdk import Asset
 from astro import sql as aql
 from astro.files import File
 from matplotlib.figure import Figure
@@ -20,8 +21,6 @@ from sklearn.metrics import (
     recall_score,
 )
 from utils.constants import default_args
-
-from airflow import Dataset
 
 # AWS S3 parameters
 AWS_CONN_ID = "conn_minio_s3"
@@ -61,7 +60,7 @@ def matriz_confusao(y_test: pd.DataFrame, y_predict: pd.DataFrame) -> Figure:
     default_args=default_args,
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    schedule=[Dataset("model_trained")],
+    schedule=[Asset("model_trained")],
     default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "Predict"],
 )

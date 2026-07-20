@@ -8,12 +8,11 @@ from typing import Any
 import pandas as pd
 from airflow.decorators import dag, task, task_group
 from airflow.operators.empty import EmptyOperator
+from airflow.sdk import Asset
 from astro import sql as aql
 from astro.files import File
 from mlflow_provider.hooks.client import MLflowClientHook
 from utils.constants import default_args
-
-from airflow import Dataset
 
 log = logging.getLogger(__name__)
 log.setLevel(os.getenv("AIRFLOW__LOGGING__FAB_LOGGING_LEVEL", "INFO"))
@@ -37,8 +36,11 @@ MAX_RESULTS_MLFLOW_LIST_EXPERIMENTS = 1000
     default_args=default_args,
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    schedule=[Dataset("astro+s3://conn_minio_s3@data/data.parquet")],
-    # schedule=[Dataset("astro://postgres@?table=new_features&schema=public&database=feature_store")],
+    schedule=[
+        Asset(
+            "s3://data/data.parquet", name="temp_ingestion_parquet", connection_id="conn_minio_s3"
+        )
+    ],
     # schedule="@once",
     default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "feature engineering"],
@@ -47,7 +49,7 @@ def feature_eng() -> None:  # noqa: C901
     start = EmptyOperator(task_id="start")
     end = EmptyOperator(
         task_id="end",
-        outlets=[Dataset("s3://" + DATA_BUCKET_NAME + "/temp/" + FEATURE_FILE_PATH)],
+        outlets=[Asset("s3://" + DATA_BUCKET_NAME + "/temp/" + FEATURE_FILE_PATH)],
     )
 
     @task_group

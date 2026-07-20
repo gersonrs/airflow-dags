@@ -9,12 +9,11 @@ import pandas as pd
 import seaborn as sns
 from airflow.decorators import dag, task
 from airflow.operators.empty import EmptyOperator
+from airflow.sdk import Asset
 from astro import sql as aql
 from astro.files import File
 from src.feature_engineer_common import GetMetrics
 from utils.constants import default_args
-
-from airflow import Dataset
 
 # AWS S3 parameters
 AWS_CONN_ID = "conn_minio_s3"
@@ -29,7 +28,7 @@ FILE_TO_SAVE_PREDICTIONS = "ubereats_predictions.parquet"
     default_args=default_args,
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    schedule=[Dataset("ubereats_model_trained")],
+    schedule=[Asset("ubereats_model_trained")],
     default_view="graph",
     tags=["ubereats", "ml", "prediction", "regression", "mlflow"],
 )

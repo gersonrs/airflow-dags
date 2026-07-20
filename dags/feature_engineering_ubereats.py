@@ -13,13 +13,12 @@ from airflow.decorators import dag, task, task_group
 from airflow.hooks.base import BaseHook
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.amazon.aws.operators.s3 import S3CreateBucketOperator
+from airflow.sdk import Asset
 from astro import sql as aql
 from astro.dataframes.pandas import DataFrame
 from astro.files import File
 from mlflow_provider.hooks.client import MLflowClientHook
 from src.feature_engineer_common import haversine_vector
-
-from airflow import Dataset
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -41,7 +40,7 @@ MAX_RESULTS_MLFLOW_LIST_EXPERIMENTS = 1000
 
 
 @dag(
-    schedule=[Dataset(f"s3://{DATA_FILE_PATH}")],
+    schedule=[Asset(f"s3://{DATA_FILE_PATH}")],
     start_date=datetime(2025, 1, 1),
     catchup=False,
     default_view="graph",
@@ -51,7 +50,7 @@ MAX_RESULTS_MLFLOW_LIST_EXPERIMENTS = 1000
 def feature_engineering_ubereats() -> None:  # noqa: C901
     start = EmptyOperator(task_id="start")
     end = EmptyOperator(
-        task_id="end", outlets=[Dataset(f"s3://{DATA_BUCKET_NAME}/uber/{FEATURE_FILE_PATH}")]
+        task_id="end", outlets=[Asset(f"s3://{DATA_BUCKET_NAME}/uber/{FEATURE_FILE_PATH}")]
     )
 
     create_buckets = S3CreateBucketOperator.partial(

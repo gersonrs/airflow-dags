@@ -14,11 +14,10 @@ import pandas as pd
 from airflow.decorators import dag
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.amazon.aws.operators.s3 import S3CreateBucketOperator
+from airflow.sdk import Asset
 from astro import sql as aql
 from astro.files import File
 from utils.constants import default_args
-
-from airflow import Dataset
 
 log = logging.getLogger(__name__)
 log.setLevel(os.getenv("AIRFLOW__LOGGING__FAB_LOGGING_LEVEL", "INFO"))
@@ -46,7 +45,7 @@ def generate_values() -> None:
     start = EmptyOperator(task_id="start")
     end = EmptyOperator(
         task_id="end",
-        outlets=[Dataset("astro+s3://conn_minio_s3@data/data.parquet")],
+        outlets=[Asset("s3://conn_minio_s3@data/data.parquet")],
     )
 
     create_buckets_if_not_exists = S3CreateBucketOperator.partial(

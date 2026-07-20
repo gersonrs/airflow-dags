@@ -17,8 +17,7 @@ from datetime import datetime, timedelta
 from airflow.decorators import dag
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
-
-from airflow import Dataset
+from airflow.sdk import Asset
 
 # [START import_module]
 # O objeto DAG; precisaremos disso para instanciar um DAG
@@ -79,7 +78,7 @@ def show_case_uber_eats_dag() -> None:
     start = EmptyOperator(task_id="start")
     end = EmptyOperator(
         task_id="end",
-        outlets=[Dataset("s3://gold/delivery_dataset/")],
+        outlets=[Asset("s3://gold/delivery_dataset/")],
     )
 
     """

@@ -5,6 +5,7 @@ from typing import Any
 
 from airflow.decorators import dag, task, task_group
 from airflow.operators.empty import EmptyOperator
+from airflow.sdk import Asset
 from astro import sql as aql
 from astro.dataframes.pandas import DataFrame
 from mlflow_provider.hooks.client import MLflowClientHook
@@ -15,8 +16,6 @@ from mlflow_provider.operators.registry import (
 )
 from sklearn.linear_model import LogisticRegression
 from utils.constants import default_args
-
-from airflow import Dataset
 
 FILE_PATH = "features.parquet"
 
@@ -40,13 +39,13 @@ TARGET_COLUMN = "target"
     default_args=default_args,
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    schedule=[Dataset("s3://" + DATA_BUCKET_NAME + "/temp/" + FILE_PATH)],
+    schedule=[Asset("s3://" + DATA_BUCKET_NAME + "/temp/" + FILE_PATH)],
     default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "Train"],
 )
 def train() -> None:  # noqa: C901
     start = EmptyOperator(task_id="start")
-    end = EmptyOperator(task_id="end", outlets=[Dataset("model_trained")])
+    end = EmptyOperator(task_id="end", outlets=[Asset("model_trained")])
 
     @task
     def fetch_feature_df(**context: Any) -> DataFrame:
