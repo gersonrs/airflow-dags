@@ -1,22 +1,22 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta
 from typing import Any
 
-from airflow import Dataset
-from airflow.decorators import dag
-from airflow.decorators import task
-from airflow.decorators import task_group
+from airflow.decorators import dag, task, task_group
 from airflow.operators.empty import EmptyOperator
-from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.dataframes.pandas import DataFrame
 from mlflow_provider.hooks.client import MLflowClientHook
-from mlflow_provider.operators.registry import CreateModelVersionOperator
-from mlflow_provider.operators.registry import CreateRegisteredModelOperator
-from mlflow_provider.operators.registry import TransitionModelVersionStageOperator
+from mlflow_provider.operators.registry import (
+    CreateModelVersionOperator,
+    CreateRegisteredModelOperator,
+    TransitionModelVersionStageOperator,
+)
 from sklearn.linear_model import LogisticRegression
-
 from utils.constants import default_args
+
+from airflow import Dataset
 
 FILE_PATH = "features.parquet"
 
@@ -38,7 +38,7 @@ TARGET_COLUMN = "target"
 @dag(
     dag_id="train_model",
     default_args=default_args,
-    start_date=days_ago(1),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
     schedule=[Dataset("s3://" + DATA_BUCKET_NAME + "/temp/" + FILE_PATH)],
     default_view="graph",

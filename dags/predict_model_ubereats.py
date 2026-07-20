@@ -1,20 +1,20 @@
 from __future__ import annotations
 
 import os
+from datetime import datetime, timedelta
 from typing import Any
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from airflow import Dataset
-from airflow.decorators import dag
-from airflow.decorators import task
+from airflow.decorators import dag, task
 from airflow.operators.empty import EmptyOperator
-from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.files import File
 from src.feature_engineer_common import GetMetrics
 from utils.constants import default_args
+
+from airflow import Dataset
 
 # AWS S3 parameters
 AWS_CONN_ID = "conn_minio_s3"
@@ -27,7 +27,7 @@ FILE_TO_SAVE_PREDICTIONS = "ubereats_predictions.parquet"
 @dag(
     dag_id="predict_model_ubereats",
     default_args=default_args,
-    start_date=days_ago(1),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
     schedule=[Dataset("ubereats_model_trained")],
     default_view="graph",

@@ -3,20 +3,22 @@
 
 Artificially generates feedback on the predictions made by the model in the predict DAG.
 """
+
 from __future__ import annotations
 
 import logging
 import os
+from datetime import datetime, timedelta
 
 import pandas as pd
-from airflow import Dataset
 from airflow.decorators import dag
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.amazon.aws.operators.s3 import S3CreateBucketOperator
-from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.files import File
 from utils.constants import default_args
+
+from airflow import Dataset
 
 log = logging.getLogger(__name__)
 log.setLevel(os.getenv("AIRFLOW__LOGGING__FAB_LOGGING_LEVEL", "INFO"))
@@ -34,7 +36,7 @@ XCOM_BUCKET = "localxcom"
 @dag(
     dag_id="temp_ingestion",
     default_args=default_args,
-    start_date=days_ago(1),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
     schedule_interval="@once",
     default_view="graph",

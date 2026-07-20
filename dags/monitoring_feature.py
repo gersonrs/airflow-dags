@@ -2,15 +2,14 @@ from __future__ import annotations
 
 import logging
 import os
+from datetime import datetime, timedelta
 from typing import Any
 
 import pandas as pd
-from airflow.decorators import dag
-from airflow.decorators import task
+from airflow.decorators import dag, task
 from airflow.models.baseoperator import chain
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
-from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.files import File
 from utils.constants import default_args
@@ -27,7 +26,7 @@ MLFLOW_ARTIFACT_BUCKET = "mlflow"
 @dag(
     dag_id="monitoring_feature",
     default_args=default_args,
-    start_date=days_ago(1),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
     # schedule=[Dataset("prediction_data")],
     schedule_interval="@daily",

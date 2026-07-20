@@ -2,25 +2,24 @@ from __future__ import annotations
 
 import logging
 import os
+from datetime import datetime, timedelta
 from typing import Any
 
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 import s3fs
-from airflow import Dataset
-from airflow.decorators import dag
-from airflow.decorators import task
-from airflow.decorators import task_group
+from airflow.decorators import dag, task, task_group
 from airflow.hooks.base import BaseHook
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.amazon.aws.operators.s3 import S3CreateBucketOperator
-from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.dataframes.pandas import DataFrame
 from astro.files import File
 from mlflow_provider.hooks.client import MLflowClientHook
 from src.feature_engineer_common import haversine_vector
+
+from airflow import Dataset
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -43,7 +42,7 @@ MAX_RESULTS_MLFLOW_LIST_EXPERIMENTS = 1000
 
 @dag(
     schedule=[Dataset(f"s3://{DATA_FILE_PATH}")],
-    start_date=days_ago(1),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
     default_view="graph",
     tags=["ubereats", "mlflow", "feature_engineering"],
@@ -185,8 +184,8 @@ def feature_engineering_ubereats() -> None:  # noqa: C901
     @aql.dataframe()
     def build_features(data: DataFrame, experiment_id: str) -> DataFrame:
         import mlflow
-        from sklearn.preprocessing import OneHotEncoder
         from sklearn.compose import ColumnTransformer
+        from sklearn.preprocessing import OneHotEncoder
 
         for column in data.columns:
             data[column] = data[column].apply(lambda value: np.nan if value == "NaN " else value)
@@ -264,9 +263,7 @@ def feature_engineering_ubereats() -> None:  # noqa: C901
             lambda value: (
                 "Breakfast"
                 if value in [8, 9, 10, 11]
-                else "Launch"
-                if value in [12, 13, 14, 15, 16]
-                else "Dinner"
+                else "Launch" if value in [12, 13, 14, 15, 16] else "Dinner"
             )
         )
 

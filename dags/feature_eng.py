@@ -2,19 +2,18 @@ from __future__ import annotations
 
 import logging
 import os
+from datetime import datetime, timedelta
 from typing import Any
 
 import pandas as pd
-from airflow import Dataset
-from airflow.decorators import dag
-from airflow.decorators import task
-from airflow.decorators import task_group
+from airflow.decorators import dag, task, task_group
 from airflow.operators.empty import EmptyOperator
-from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.files import File
 from mlflow_provider.hooks.client import MLflowClientHook
 from utils.constants import default_args
+
+from airflow import Dataset
 
 log = logging.getLogger(__name__)
 log.setLevel(os.getenv("AIRFLOW__LOGGING__FAB_LOGGING_LEVEL", "INFO"))
@@ -36,7 +35,7 @@ MAX_RESULTS_MLFLOW_LIST_EXPERIMENTS = 1000
 @dag(
     dag_id="feaure_engineering",
     default_args=default_args,
-    start_date=days_ago(1),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
     schedule=[Dataset("astro+s3://conn_minio_s3@data/data.parquet")],
     # schedule=[Dataset("astro://postgres@?table=new_features&schema=public&database=feature_store")],

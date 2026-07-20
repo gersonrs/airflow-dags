@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta
+
+from airflow.models import DAG
+from airflow.operators.python import PythonOperator
+from airflow.providers.amazon.aws.operators.s3 import S3DeleteObjectsOperator, S3ListOperator
+from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
+from src.s3_etl_business import read_business_json_data
+from utils.constants import PROCESSING_ZONE
 
 import airflow
 from airflow import XComArg
-from airflow.models import DAG
-from airflow.operators.python import PythonOperator
-from airflow.providers.amazon.aws.operators.s3 import S3DeleteObjectsOperator
-from airflow.providers.amazon.aws.operators.s3 import S3ListOperator
-from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
-from airflow.utils.dates import days_ago
-from src.s3_etl_business import read_business_json_data
-from utils.constants import PROCESSING_ZONE
 
 # [START import_module]
 # [START env_variables]
@@ -25,7 +24,6 @@ from utils.constants import PROCESSING_ZONE
 # [START default_args]
 default_args = {
     "owner": "Gerson_S",
-    "start_date": airflow.utils.dates.days_ago(1),
     "depends_on_past": False,
     "email": ["gerson.santos@dellteam.com"],
     "email_on_failure": False,
@@ -39,7 +37,7 @@ default_args = {
 with DAG(
     dag_id="s3-etl-business-part-2",
     default_args=default_args,
-    start_date=days_ago(1),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
     schedule_interval="@once",
     tags=["development", "s3", "sensor", "minio", "python", "mongodb"],

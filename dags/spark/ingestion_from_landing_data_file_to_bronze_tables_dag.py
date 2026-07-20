@@ -9,13 +9,13 @@ A primeira tarefa é enviar sparkApplication no cluster Kubernetes.
 E a segunda tarefa é verificar o estado final do sparkApplication que enviou
 no primeiro estado.
 """
+
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from airflow.decorators import dag
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
-from airflow.utils.dates import days_ago
 
 # [START import_module]
 # O objeto DAG; precisaremos disso para instanciar um DAG
@@ -65,7 +65,7 @@ default_args = {
 @dag(
     dag_id="ingestion-from-landing-data-file-to-bronze-tables",
     default_args=default_args,
-    start_date=days_ago(1),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
     schedule_interval="@daily",
     max_active_runs=1,

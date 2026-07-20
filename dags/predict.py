@@ -1,25 +1,27 @@
 from __future__ import annotations
 
 import os
+from datetime import datetime, timedelta
 from typing import Any
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from airflow import Dataset
-from airflow.decorators import dag
-from airflow.decorators import task
+from airflow.decorators import dag, task
 from airflow.operators.empty import EmptyOperator
-from airflow.utils.dates import days_ago
 from astro import sql as aql
 from astro.files import File
 from matplotlib.figure import Figure
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import f1_score
-from sklearn.metrics import precision_score
-from sklearn.metrics import recall_score
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 from utils.constants import default_args
+
+from airflow import Dataset
 
 # AWS S3 parameters
 AWS_CONN_ID = "conn_minio_s3"
@@ -57,7 +59,7 @@ def matriz_confusao(y_test: pd.DataFrame, y_predict: pd.DataFrame) -> Figure:
 @dag(
     dag_id="predict",
     default_args=default_args,
-    start_date=days_ago(1),
+    start_date=datetime(2025, 1, 1),
     catchup=False,
     schedule=[Dataset("model_trained")],
     default_view="graph",
