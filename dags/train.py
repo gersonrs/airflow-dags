@@ -6,8 +6,6 @@ from typing import Any
 from airflow.decorators import dag, task, task_group
 from airflow.operators.empty import EmptyOperator
 from airflow.sdk import Asset
-from astro import sql as aql
-from astro.dataframes.pandas import DataFrame
 from mlflow_provider.hooks.client import MLflowClientHook
 from mlflow_provider.operators.registry import (
     CreateModelVersionOperator,
@@ -39,7 +37,7 @@ TARGET_COLUMN = "target"
     default_args=default_args,
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    schedule="@once",
+    schedule=[Asset("s3://" + DATA_BUCKET_NAME + "/temp/" + FILE_PATH)],
     default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "Train"],
 )
@@ -48,7 +46,7 @@ def train() -> None:  # noqa: C901
     end = EmptyOperator(task_id="end", outlets=[Asset("model_trained")])
 
     @task
-    def fetch_feature_df(**context: Any) -> DataFrame:
+    def fetch_feature_df(**context: Any):
         "Fetch the feature dataframe from the feature engineering DAG."
         feature_df = context["ti"].xcom_pull(
             dag_id="feaure_engineering",
@@ -75,14 +73,15 @@ def train() -> None:  # noqa: C901
 
     # Train a model
     # @task(executor_config=etl_config)
-    @aql.dataframe()
-    def train_model(feature_df: dict[str, DataFrame], experiment_id: str, run_name: str) -> Any:
+    @task(task_id="train_model")
+    def train_model(feature_df: dict, experiment_id: str, run_name: str) -> str:
         "Train a model and log it to MLFlow."
-
         import mlflow
+        import pandas as pd  # Importe o pandas se precisar tipar internamente
 
         mlflow.sklearn.autolog()
 
+        # Certifique-se de que o xcom_pull anterior entregou um dicionário puro do Python
         X_train = feature_df["X_train"]
         y_train = feature_df["y_train"]
 
@@ -90,12 +89,10 @@ def train() -> None:  # noqa: C901
 
         with mlflow.start_run(experiment_id=experiment_id, run_name=run_name) as run:
             model.fit(X_train, y_train)
-            # Registro do modelo
             mlflow.sklearn.log_model(model, "model")
 
         run_id = run.info.run_id
-
-        return run_id
+        return str(run_id)
 
     fetched_feature_df = fetch_feature_df()
     fetched_experiment_id = fetch_experiment_id(experiment_name=EXPERIMENT_NAME)
