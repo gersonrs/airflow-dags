@@ -1,6 +1,6 @@
 import os
 
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
 
 def maga_ml_task(
