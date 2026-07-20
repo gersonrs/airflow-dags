@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.4.0](https://github.com/gersonrs/airflow-dags/compare/v1.3.0...v1.4.0) (2026-07-20)
+
+
+### 🚀 New Features
+
+* adjust dag ([7d49ded](https://github.com/gersonrs/airflow-dags/commit/7d49ded1c80cfb9ee1568d3e56679984f1fda0ad))
+* adjust dag ([e955db5](https://github.com/gersonrs/airflow-dags/commit/e955db5ce80a4f48fef70c26446074e837205f0c))
+* adjust dag ([ff7b5be](https://github.com/gersonrs/airflow-dags/commit/ff7b5beaf92de730127459863e20959fd9207986))
+* adjust dag ([cb0600e](https://github.com/gersonrs/airflow-dags/commit/cb0600edccd560b67a34694b663039994efcaf51))
+* adjust maga_ml_task ([68d2a8d](https://github.com/gersonrs/airflow-dags/commit/68d2a8d10ac3e50cb5ead6226c99655679dacd40))
+* adjust schedule parameter ([e6b6fd8](https://github.com/gersonrs/airflow-dags/commit/e6b6fd8fddf138240ee5b77a20bf2145ea5a406b))
+* adjust schedule parameter ([fed61f3](https://github.com/gersonrs/airflow-dags/commit/fed61f3ad824c33eca5a81e3f10e3b5b6337aff8))
+* adjust schedule parameter ([f86a529](https://github.com/gersonrs/airflow-dags/commit/f86a529182b69ca16464920131b144549cc9e2c3))
+* adjust schedule parameter ([385b140](https://github.com/gersonrs/airflow-dags/commit/385b14044db1b33948e35ad84a53ba6c1f3bca8e))
+* adjust schedule parameter ([130dc4f](https://github.com/gersonrs/airflow-dags/commit/130dc4f5031d5f71621943b2cf5a4bb0081004e4))
+* adjust schedule parameter ([f8dc911](https://github.com/gersonrs/airflow-dags/commit/f8dc911011edb355d921abc4440d3ec522491c03))
+* adjust submodule and things ([8a10d88](https://github.com/gersonrs/airflow-dags/commit/8a10d88875427d33e0f0219bb2b716671cbb6f52))
+* remove default_view parameter ([f875575](https://github.com/gersonrs/airflow-dags/commit/f8755754182237700c0f8a40a2d47a11802e6f5a))
+
 ## [1.3.0](https://github.com/GersonRS/airflow-dags/compare/v1.2.1...v1.3.0) (2025-03-28)
 
 
