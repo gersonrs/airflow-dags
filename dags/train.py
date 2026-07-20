@@ -6,9 +6,9 @@ from typing import Any
 from airflow.decorators import dag, task, task_group
 from airflow.operators.empty import EmptyOperator
 from airflow.sdk import Asset
-from dags.utils.constants import default_args
 from mlflow_provider.hooks.client import MLflowClientHook
 from sklearn.linear_model import LogisticRegression
+from utils.constants import default_args
 
 FILE_PATH = "features.parquet"
 
