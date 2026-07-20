@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 import pandas as pd
 import requests
-from airflow import DAG
 from airflow.operators.python import PythonOperator
+
+from airflow import DAG
 
 default_args = {
     "owner": "airflow",
@@ -24,7 +24,7 @@ dag = DAG(
     "github_repositories_dag",
     default_args=default_args,
     description="Extrai dados da API do GitHub e processa",
-    schedule_interval=timedelta(days=1),
+    schedule=timedelta(days=1),
 )
 
 

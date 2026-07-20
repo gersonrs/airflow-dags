@@ -39,7 +39,7 @@ MAX_RESULTS_MLFLOW_LIST_EXPERIMENTS = 1000
     catchup=False,
     schedule=[Dataset("astro+s3://conn_minio_s3@data/data.parquet")],
     # schedule=[Dataset("astro://postgres@?table=new_features&schema=public&database=feature_store")],
-    # schedule_interval="@once",
+    # schedule="@once",
     default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "feature engineering"],
 )

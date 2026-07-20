@@ -38,7 +38,7 @@ XCOM_BUCKET = "localxcom"
     default_args=default_args,
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    schedule_interval="@once",
+    schedule="@once",
     default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "Generate values"],
 )
