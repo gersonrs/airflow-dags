@@ -33,7 +33,6 @@ TARGET_COLUMN = "target"
     start_date=datetime(2025, 1, 1),
     catchup=False,
     schedule=[Asset("s3://" + DATA_BUCKET_NAME + "/temp/" + FILE_PATH)],
-    default_view="graph",
     tags=["development", "s3", "minio", "python", "postgres", "ML", "Train"],
 )
 def train() -> None:  # noqa: C901
