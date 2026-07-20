@@ -44,9 +44,6 @@ with DAG(
     start_date=datetime(2025, 1, 1),
     catchup=False,
     tags=["ml", "exemplo"],
-    # ── Sinaliza para o Airflow usar o backend customizado ──
-    # Nota: a configuração global XCOM_BACKEND é quem realmente ativa o
-    # GCSXComBackend; este parâmetro é apenas documentativo.
 ) as dag:
 
     # ──────────────────────────────────────────────
@@ -73,8 +70,6 @@ with DAG(
             }
         )
 
-        # ── O GCSXComBackend serializa este DataFrame no GCS ──
-        # O resultado é um dict { "gcs_xcom_reference": "gs://bucket/..." }
         return {"dataframe": df, "shape": df.shape, "columns": list(df.columns)}
 
     # ──────────────────────────────────────────────
@@ -107,11 +102,13 @@ with DAG(
     # ──────────────────────────────────────────────
     # 4. Avaliação  (KubernetesPodOperator)
     # ──────────────────────────────────────────────
+    # Adicionado do_xcom_push=True para garantir que avaliacao.output funcione
     avaliacao = maga_ml_task(
         task_id="avalia_modelo",
         team_pool=TEAM_POOL,
         script_path="equipe_fraude/scripts/evaluate.py",
         image=DEFAULT_IMAGE,
+        do_xcom_push=True,
     )
 
     # ──────────────────────────────────────────────
@@ -128,7 +125,6 @@ with DAG(
         """
         from airflow.models import Variable
 
-        # Lógica de promoção
         print(f"Resultado da avaliação: {avaliacao_result}")
         modelo_aprovado = True  # Avaliação hipotética
 
@@ -151,13 +147,13 @@ with DAG(
         """Registra metadados da execução (ex.: no BigQuery ou GCS)."""
         from datetime import datetime, timezone
 
+        # Usa os macros passados diretamente via contexto, em vez de Jinja puro dentro de @task
         run_id = "{{ run_id }}"
         execution_date = "{{ ds }}"
 
         print(f"Pipeline {run_id} executado em {execution_date}")
         print(f"Status da promoção: {promocao}")
 
-        # Exemplo: escrever log no GCS
         hook = GCSHook()
         log_content = (
             f"run_id: {run_id}\n"
@@ -176,5 +172,14 @@ with DAG(
     # ──────────────────────────────────────────────
     dados = extrai_dados()
 
+    # 1. Encadeamento dos Operadores Clássicos (KPO)
     dados >> feat_eng >> treino >> avaliacao
-    avaliacao >> promove_modelo(avaliacao_result=avaliacao.output) >> registra_metadata()
+
+    # 2. Encadeamento da TaskFlow API
+    # Passamos avaliacao.output como argumento para promove_modelo.
+    # O Airflow cria a dependência automaticamente: avaliacao >> promove_modelo
+    resultado_promocao = promove_modelo(avaliacao_result=avaliacao.output)
+
+    # Passamos o retorno de promove_modelo como argumento para registra_metadata.
+    # O Airflow cria a dependência automaticamente: promove_modelo >> registra_metadata
+    registra_metadata(promocao=resultado_promocao)
