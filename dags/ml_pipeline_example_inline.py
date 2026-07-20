@@ -1,7 +1,3 @@
-# Importe o decorador kubernetes
-from airflow.providers.cncf.kubernetes.decorators import kubernetes
-from airflow.providers.cncf.kubernetes.secret import Secret
-
 """
 DAG de exemplo de ML Pipeline — demonstra o uso de:
   - magalu_operators.maga_ml_task  (KubernetesPodOperator customizado)
@@ -17,11 +13,6 @@ Como usar:
 from datetime import datetime, timedelta
 
 from airflow.decorators import task
-from airflow.models import Variable
-from airflow.providers.google.cloud.hooks.gcs import GCSHook
-
-# Importa o operador customizado
-from magalu_operators import maga_ml_task
 
 from airflow import DAG
 
@@ -60,7 +51,7 @@ with DAG(
     # ──────────────────────────────────────────────
     # Feature engineering rodando em um Pod Isolado via Função Inline
     # ──────────────────────────────────────────────
-    @kubernetes(
+    @task.kubernetes(
         task_id="feature_engineering",
         namespace="default",
         image=DEFAULT_IMAGE,
